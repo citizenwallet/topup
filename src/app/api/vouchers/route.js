@@ -8,8 +8,8 @@ const AccountFactoryAddress = "0x9406Cc6185a346906296840746125a0E44976454";
 const tokenContractAddress = "0xBABCf159c4e3186cf48e4a48bC0AeC17CF9d90FE"; // mumbai
 const tokenDecimals = 6;
 const voucherValue = 10;
-const communitySlug = "eure.polygon";
-const communityUrl = "eure.polygon.citizenwallet.xyz";
+const communitySlug = "app"; // USDC on Polygon
+const communityUrl = "app.citizenwallet.xyz"; // USDC on Polygon
 
 export async function GET(request) {
   const provider = new ethers.providers.JsonRpcProvider(
@@ -37,7 +37,7 @@ export async function GET(request) {
   );
 
   const faucetAccountAddress = await accountFactory.getAddress(
-    process.env.FAUCET_PUBLIC_KEY,
+    faucetWallet.address,
     0
   );
 
@@ -73,20 +73,22 @@ export async function GET(request) {
     );
   }
 
-  const encryptedWallet = await voucherWallet.encrypt(process.env.SECRET, {
-    scrypt: { N: 2 },
-  });
+  const encryptedWallet = await voucherWallet.encrypt(
+    process.env.VOUCHER_SECRET,
+    {
+      scrypt: { N: 2 },
+    }
+  );
 
-  const params = `alias=${communitySlug}&creator=${process.env.FAUCET_PUBLIC_KEY}`;
-  console.log(">>> encryptedWallet", encryptedWallet);
-  console.log(">>> compressed", compress(encryptedWallet));
-  console.log(">>> compressed params", compress(params));
+  const voucherName = "My Voucher of 10 USDC"; // This will appear above the token logo when redeeming the voucher
 
-  //        '$appLink/#/?voucher=$encoded&params=$encodedParams&alias=$alias';
+  const params = `alias=${communitySlug}&creator=${faucetAccountAddress}&name=${voucherName}`;
 
-  const voucherUrl = `https://${communityUrl}/#/?voucher=${compress(
-    encryptedWallet
-  )}&params=${compress(params)}&alias=${communitySlug}`;
+  const voucher = `voucher=${compress(encryptedWallet)}&params=${compress(
+    params
+  )}&alias=${communitySlug}`;
+
+  const voucherUrl = `https://${communityUrl}/#/?${voucher}`;
 
   const res = {
     faucetAccountAddress,
