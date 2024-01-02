@@ -1,9 +1,10 @@
 import { sql } from "@vercel/postgres";
 
-export async function recordStripeEvent(event) {
+export async function recordTransferEvent(event) {
+  console.log(">>> recordTransferEvent", event);
   const client = await sql.connect();
   const query = {
-    text: `INSERT INTO stripe_events ("${Object.keys(event).join(
+    text: `INSERT INTO transfer_events ("${Object.keys(event).join(
       '","'
     )}") VALUES (${Object.keys(event)
       .map((r, i) => `\$${i + 1}`)

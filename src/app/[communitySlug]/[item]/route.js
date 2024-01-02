@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
   // console.log(">>> accountAddress", accountAddress);
   // console.log(">>> item", params.item);
 
-  const redirectUrl = `${process.env.WEBSITE_URL}/${params.communitySlug}/voucher`;
+  const redirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
 
   const session = await createStripeCheckoutSession(
     accountAddress,

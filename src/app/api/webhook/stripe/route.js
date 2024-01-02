@@ -1,6 +1,6 @@
 import stripe from "stripe";
 import { transfer } from "@/lib/transfer";
-import { recordStripeEvent } from "@/lib/db";
+import { recordTransferEvent } from "@/lib/db";
 
 const decimals = 6;
 
@@ -18,7 +18,7 @@ export async function POST(request) {
     );
   } catch (err) {
     console.log("!!! ERROR", err.message, JSON.stringify(err, null, 2));
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    return Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
   // Handle the event
@@ -42,10 +42,16 @@ export async function POST(request) {
       );
       row.fees = event.data.object.amount_total - row.amount;
 
-      row.txHash = await transfer(row.amount, row.accountAddress);
+      const tokenContractAddress =
+        process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS;
+      row.txHash = await transfer(
+        tokenContractAddress,
+        row.amount,
+        row.accountAddress
+      );
 
       if (process.env.POSTGRES_URL) {
-        recordStripeEvent(row);
+        recordTransferEvent(row);
       }
 
       break;
@@ -55,5 +61,5 @@ export async function POST(request) {
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  return new Response("ok", { status: 200 });
+  return Response("ok", { status: 200 });
 }

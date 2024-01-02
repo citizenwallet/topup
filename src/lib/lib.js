@@ -11,3 +11,16 @@ export function compress(data) {
     .replace(/\//g, "_");
   return base64Data;
 }
+
+let config;
+async function loadConfig() {
+  if (config) return Promise.resolve(config);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/config`);
+  config = await res.json();
+  return config;
+}
+export async function getConfig(communitySlug) {
+  const communities = await loadConfig();
+  if (!communitySlug) return communities;
+  return communities.find((c) => c.community.alias === communitySlug);
+}

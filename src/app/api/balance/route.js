@@ -1,16 +1,40 @@
 import { ethers } from "ethers";
 
 import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
-const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS;
+import { getConfig } from "@/lib/lib";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req, res) {
   const { searchParams } = new URL(req.url);
   let account = searchParams.get("account");
+  const communitySlug = searchParams.get("communitySlug");
 
-  // console.log(">>> connecting to", process.env.POLYGON_MUMBAI_RPC_URL);
-  // console.log(">>> token contract address", tokenContractAddress);
+  if (!communitySlug) {
+    return Response.json(
+      {
+        error: "Missing communitySlug",
+      },
+      { status: 400 }
+    );
+  }
+
+  const config = await getConfig(communitySlug);
+  const tokenContractAddress = config.token.address;
+
+  if (!config) {
+    return Response.json(
+      {
+        error: `Community not found (${communitySlug})`,
+      },
+      { status: 404 }
+    );
+  }
+
+  console.log(">>> connecting to", config.node.url);
+  console.log(">>> token contract address", tokenContractAddress);
   const provider = new ethers.providers.JsonRpcProvider({
-    url: process.env.NEXT_PUBLIC_RPC_URL,
+    url: config.node.url,
     skipFetchSetup: true,
   });
 
@@ -27,10 +51,12 @@ export async function GET(req, res) {
     provider
   );
 
+  const nativeBalance = await provider.getBalance(account);
+  const network = await provider.getNetwork();
   const balance = await tokenContract.balanceOf(account);
   const tokenSymbol = await tokenContract.symbol();
   const tokenDecimals = await tokenContract.decimals();
-  console.log(">>> tokenAddress", account);
+  console.log(">>> tokenContractAddress", tokenContractAddress);
   console.log(">>> tokenSymbol", tokenSymbol);
   console.log(">>> tokenDecimals", parseInt(tokenDecimals, 10));
   console.log("Account:", account);
@@ -43,10 +69,13 @@ export async function GET(req, res) {
 
   const data = {
     account,
-    tokenAddress: process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS,
+    tokenContractAddress,
     tokenSymbol,
     tokenDecimals: decimals,
     balance: formattedBalance,
+    nativeBalance: ethers.utils.formatEther(nativeBalance),
+    chainId: network.chainId,
+    config,
     gasPrice: ethers.utils.formatUnits(gasPrice, "gwei"),
   };
 

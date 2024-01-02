@@ -6,18 +6,12 @@ import { useEffect, useState } from "react";
 
 export default function Page({ params }) {
   const [accountAddress, setAccountAddress] = useState();
-
-  const communityUrl = "zinne.citizenwallet.xyz";
-  const communitySlug = "zinne";
-
+  const communitySlug = params.communitySlug;
   useEffect(() => {
     const getVoucher = async () => {
       window.voucherLoading = true;
       console.log(">>> creating voucher...");
-      const voucher = await createVoucher({
-        slug: communitySlug,
-        url: communityUrl,
-      });
+      const voucher = await createVoucher(communitySlug);
       console.log(">>> voucher created", voucher);
       window.localStorage.setItem(
         "voucherAccountAddress",
@@ -30,28 +24,45 @@ export default function Page({ params }) {
     if (!window.voucherLoading) getVoucher();
   }, []);
 
-  const packages = [
-    {
-      amount: 1,
-      currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowVKNOr5ls`,
-    },
-    {
-      amount: 10,
-      currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowMRJQkgZE`,
-    },
-    {
-      amount: 20,
-      currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyow5IV6yjWI`,
-    },
-    {
-      amount: 50,
-      currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowCrxuuJnb`,
-    },
-  ];
+  const packages = {
+    "gt.celo": [
+      {
+        amount: 10,
+        name: "tokens of gratitude",
+        buyUrl: `/${params.communitySlug}/topup`,
+      },
+    ],
+    zinne: [
+      {
+        amount: 1,
+        name: "Zinne",
+        currency: "EUR",
+        formattedFxRate: "1 Zinne = 1 Euro",
+        buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowVKNOr5ls`,
+      },
+      {
+        amount: 10,
+        name: "Zinnes",
+        currency: "EUR",
+        formattedFxRate: "1 Zinne = 1 Euro",
+        buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowMRJQkgZE`,
+      },
+      {
+        amount: 20,
+        name: "Zinnes",
+        currency: "EUR",
+        formattedFxRate: "1 Zinne = 1 Euro",
+        buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyow5IV6yjWI`,
+      },
+      {
+        amount: 50,
+        name: "Zinnes",
+        currency: "EUR",
+        formattedFxRate: "1 Zinne = 1 Euro",
+        buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowCrxuuJnb`,
+      },
+    ],
+  };
 
   // TEST ENV
   // const packages = [
@@ -82,7 +93,10 @@ export default function Page({ params }) {
       <h1 className="text-2xl font-bold my-6 text-center">
         Choose Your Package
       </h1>
-      <Packages accountAddress={accountAddress} packages={packages} />
+      <Packages
+        accountAddress={accountAddress}
+        packages={packages[params.communitySlug]}
+      />
     </div>
   );
 }

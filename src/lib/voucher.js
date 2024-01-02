@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
-import { compress } from "./lib";
-
+import { compress, getConfig } from "./lib";
 if (!process.env.NEXT_PUBLIC_VOUCHER_SECRET) {
   console.error("!!! NEXT_PUBLIC_VOUCHER_SECRET not set");
   process.exit(0);
@@ -12,14 +11,15 @@ if (!process.env.NEXT_PUBLIC_FAUCET_ACCOUNT) {
 }
 
 import AccountFactoryAbi from "@/smartcontracts/AccountFactory.abi.json";
-const AccountFactoryAddress = process.env.NEXT_PUBLIC_ACCOUNT_FACTORY_ADDRESS;
 
-export async function createVoucher(community) {
-  const communitySlug = community.slug;
-  const communityUrl = community.url;
+export async function createVoucher(communitySlug) {
+  const config = await getConfig(communitySlug);
+  const AccountFactoryAddress = config.erc4337.account_factory_address;
+
+  const communityUrl = `${config.community.alias}.citizenwallet.xyz`;
 
   const provider = new ethers.providers.JsonRpcProvider({
-    url: process.env.NEXT_PUBLIC_RPC_URL,
+    url: config.node.url,
     skipFetchSetup: true,
   });
 

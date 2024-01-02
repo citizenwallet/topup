@@ -5,6 +5,7 @@ export default function Page({ params }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cancelled = searchParams.get("cancelled");
+  const error = searchParams.get("error");
 
   useEffect(() => {
     if (cancelled) return;
@@ -14,6 +15,9 @@ export default function Page({ params }) {
 
   if (cancelled) {
     return <p className="text-xl text-center p-8">Payment cancelled</p>;
+  }
+  if (error) {
+    return <p className="text-xl text-center p-8 text-red-800">{error}</p>;
   }
 
   return <p>Redirecting...</p>;

@@ -20,18 +20,20 @@ export function Packages({ accountAddress, packages }) {
 
   useEffect(() => {
     const newPackages = packages.map((pkg) => {
-      const formattedAmount = formatCurrency(
-        pkg.amount,
-        pkg.currency,
-        navigator.language
-      );
-      const fees = formatCurrency(
-        0.25 + 0.015 * pkg.amount,
-        pkg.currency,
-        navigator.language
-      );
+      if (pkg.currency) {
+        pkg.formattedAmount = formatCurrency(
+          pkg.amount,
+          pkg.currency,
+          navigator.language
+        );
+        pkg.fees = formatCurrency(
+          0.25 + 0.015 * pkg.amount,
+          pkg.currency,
+          navigator.language
+        );
+      }
       pkg.buyUrl += `?accountAddress=${accountAddress}`;
-      return { ...pkg, formattedAmount, fees };
+      return pkg;
     });
     setFormattedPackages(newPackages);
   }, [packages, accountAddress]);
@@ -52,21 +54,25 @@ export function Packages({ accountAddress, packages }) {
       {formattedPackages.map((pkg, i) => (
         <Card className="w-full max-w-md mb-6" key={`package-${i}`}>
           <CardHeader>
-            <CardTitle>Buy {pkg.amount} Zinnes</CardTitle>
-            <div className="text-sm text-gray-500">1 Zinne = 1 Euro</div>
+            <CardTitle>
+              {pkg.amount} {pkg.name}
+            </CardTitle>
+            <div className="text-sm text-gray-500">{pkg.formattedFxRate}</div>
           </CardHeader>
           <CardContent className="flex justify-between items-center">
             <div className="text-xl font-semibold">{pkg.formattedAmount}</div>
-            <div className="text-sm text-gray-500">
-              +{pkg.fees} (Stripe fees)
-            </div>
+            {pkg.fees && (
+              <div className="text-sm text-gray-500">
+                +{pkg.fees} (Stripe fees)
+              </div>
+            )}
           </CardContent>
           <CardFooter>
             <Link
               className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
               href={pkg.buyUrl}
             >
-              Buy Now
+              {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
             </Link>
           </CardFooter>
         </Card>
