@@ -32,21 +32,50 @@ export default function Page({ params }) {
 
   const packages = [
     {
+      amount: 1,
+      currency: "EUR",
+      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowVKNOr5ls`,
+    },
+    {
       amount: 10,
       currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTnlaFAhaWeDyowRqMeZj6u`,
+      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowMRJQkgZE`,
     },
     {
       amount: 20,
       currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTnmnFAhaWeDyowTm3oNEAS`,
+      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyow5IV6yjWI`,
     },
     {
       amount: 50,
       currency: "EUR",
-      buyUrl: `/${params.communitySlug}/price_1OTnnPFAhaWeDyowzjuHlFNA`,
+      buyUrl: `/${params.communitySlug}/price_1OTwVWFAhaWeDyowCrxuuJnb`,
     },
   ];
+
+  // TEST ENV
+  // const packages = [
+  //   {
+  //     amount: 1,
+  //     currency: "EUR",
+  //     buyUrl: `/${params.communitySlug}/price_1OTwUCFAhaWeDyowy0gQX1T5`,
+  //   },
+  //   {
+  //     amount: 10,
+  //     currency: "EUR",
+  //     buyUrl: `/${params.communitySlug}/price_1OTnlaFAhaWeDyowRqMeZj6u`,
+  //   },
+  //   {
+  //     amount: 20,
+  //     currency: "EUR",
+  //     buyUrl: `/${params.communitySlug}/price_1OTnmnFAhaWeDyowTm3oNEAS`,
+  //   },
+  //   {
+  //     amount: 50,
+  //     currency: "EUR",
+  //     buyUrl: `/${params.communitySlug}/price_1OTnnPFAhaWeDyowzjuHlFNA`,
+  //   },
+  // ];
 
   return (
     <div className="p-4">

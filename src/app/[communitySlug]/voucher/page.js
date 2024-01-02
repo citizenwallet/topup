@@ -4,14 +4,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Page({ params }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  if (searchParams.get("cancelled")) {
-    return <p>Payment cancelled</p>;
-  }
+  const cancelled = searchParams.get("cancelled");
 
   useEffect(() => {
+    if (cancelled) return;
     const voucherUrl = window.localStorage.getItem("voucherUrl");
     router.push(voucherUrl);
-  }, [router]);
+  }, [router, cancelled]);
+
+  if (cancelled) {
+    return <p className="text-xl text-center p-8">Payment cancelled</p>;
+  }
+
   return <p>Redirecting...</p>;
 }
