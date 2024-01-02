@@ -1,9 +1,6 @@
 import { ethers, Wallet } from "ethers";
-import fs from "fs";
 
-const tokenContractAbi = JSON.parse(
-  fs.readFileSync("./src/smartcontracts/erc20.abi.json", "utf-8")
-);
+import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
 const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS;
 // const tokenDecimals = 6;
 const communitySlug = "zinne";
