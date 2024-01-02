@@ -22,6 +22,11 @@ export async function transfer(amount, to) {
     skipFetchSetup: true,
   });
 
+  const gasPrice = await provider.getGasPrice();
+  console.log(
+    `Current gas price: ${ethers.utils.formatUnits(gasPrice, "gwei")} gwei`
+  );
+
   const tokenContract = new ethers.Contract(
     tokenContractAddress,
     tokenContractAbi,
@@ -37,7 +42,7 @@ export async function transfer(amount, to) {
 
   const balance = await tokenContract.balanceOf(signer.address);
 
-  console.log(">>> Sending", amount, tokenSymbol);
+  console.log(">>> Sending", amount / 100, tokenSymbol);
   console.log("From:", signer.address, `(balance: ${balance.toString()})`);
   console.log("To:", to);
   console.log("Amount:", amount);
@@ -51,11 +56,18 @@ export async function transfer(amount, to) {
   const gasEstimate = await signer.estimateGas(transaction);
   transaction.gasLimit = (BigInt(gasEstimate) * 125n) / 100n;
   const tx = await tokenContract.connect(signer).transfer(to, amountBigInt, {
-    gasLimit: (BigInt(gasEstimate) * 120n) / 100n,
+    gasLimit: (BigInt(gasEstimate) * 250n) / 100n,
+    gasPrice: BigInt(gasPrice) * 2n,
   });
 
-  // console.log("Mining transaction...");
-  console.log(`\nhttps://mumbai.polygonscan.com/tx/${tx.hash}`);
+  console.log(
+    "Mining transaction with gas estimate:",
+    gasEstimate.toString(),
+    "and gas price",
+    gasPrice.toString()
+  );
+  console.log(`\nhttps://polygonscan.com/tx/${tx.hash}`);
+  // console.log(`\nhttps://mumbai.polygonscan.com/tx/${tx.hash}`);
 
   // // The transaction is now on chain!
   // console.log(`Mined in block ${tx.blockNumber}`);
