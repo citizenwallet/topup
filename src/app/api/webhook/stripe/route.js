@@ -37,7 +37,9 @@ export async function POST(request) {
       };
 
       // Based on Stripe fees of 1.5% + 0.25 EUR
-      row.amount = ((event.data.object.amount_total - 25) / 101.5) * 100;
+      row.amount = Math.floor(
+        ((event.data.object.amount_total - 25) / 101.5) * 100
+      );
       row.fees = event.data.object.amount_total - row.amount;
 
       row.txHash = await transfer(row.amount, row.accountAddress);
