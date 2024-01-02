@@ -1,6 +1,6 @@
 import stripe from "stripe";
-import { sql } from "@vercel/postgres";
-import { mint } from "src/lib/mint";
+import { transfer } from "@/lib/transfer";
+import { recordStripeEvent } from "@/lib/db";
 
 const decimals = 6;
 
@@ -24,7 +24,7 @@ export async function POST(request) {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
-      console.log(">>> event.type", event.type);
+      console.log(">>> processing stripe event", event.type);
 
       const row = {
         processor: "stripe",
@@ -36,27 +36,15 @@ export async function POST(request) {
         data: event.data.object,
       };
 
-      row.txHash = await mint(
-        (row.amount * 10 ** decimals) / 100,
-        row.accountAddress
-      );
-      const client = await sql.connect();
-      const query = {
-        text: `INSERT INTO mint_events ("${Object.keys(row).join(
-          '","'
-        )}") VALUES (${Object.keys(row)
-          .map((r, i) => `\$${i + 1}`)
-          .join(",")}) RETURNING *`,
-        values: Object.values(row),
-      };
-      console.log(">>> query", query);
+      // Based on Stripe fees of 1.5% + 0.25 EUR
+      row.amount = ((event.data.object.amount_total - 25) / 101.5) * 100;
+      row.fees = event.data.object.amount_total - row.amount;
 
-      try {
-        const { rows } = await client.query(query.text, query.values);
-      } catch (e) {
-        console.log("!!! error", e);
+      row.txHash = await transfer(row.amount, row.accountAddress);
+
+      if (process.env.POSTGRES_URL) {
+        recordStripeEvent(row);
       }
-      await client.end();
 
       break;
     // ... handle other event types

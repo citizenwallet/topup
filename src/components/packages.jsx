@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export function Packages({ packages }) {
+export function Packages({ accountAddress, packages }) {
   const [formattedPackages, setFormattedPackages] = useState([]);
 
   useEffect(() => {
@@ -30,10 +30,11 @@ export function Packages({ packages }) {
         pkg.currency,
         navigator.language
       );
+      pkg.buyUrl += `?accountAddress=${accountAddress}`;
       return { ...pkg, formattedAmount, fees };
     });
     setFormattedPackages(newPackages);
-  }, [packages]);
+  }, [packages, accountAddress]);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
@@ -41,7 +42,11 @@ export function Packages({ packages }) {
       currency,
     }).format(amount);
   }
-  console.log(">>> formattedPackages", formattedPackages);
+  // console.log(
+  //   ">>> rendering packages for accountAddress",
+  //   accountAddress,
+  //   formattedPackages
+  // );
   return (
     <main className="flex flex-col items-center p-4">
       {formattedPackages.map((pkg, i) => (

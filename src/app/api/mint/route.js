@@ -29,9 +29,10 @@ export async function GET(request) {
   }
 
   console.log(">>> connecting to", process.env.POLYGON_MUMBAI_RPC_URL);
-  const provider = new ethers.providers.JsonRpcProvider(
-    process.env.POLYGON_MUMBAI_RPC_URL
-  );
+  const provider = new ethers.providers.JsonRpcProvider({
+    url: process.env.NEXT_PUBLIC_RPC_URL,
+    skipFetchSetup: true,
+  });
 
   const signer = new ethers.Wallet(process.env.FAUCET_PRIVATE_KEY, provider);
   const amountBigInt = ethers.utils.parseUnits(amount, tokenDecimals);

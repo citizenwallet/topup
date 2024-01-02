@@ -12,9 +12,10 @@ const communitySlug = "eure.polygon";
 const communityUrl = "eure.polygon.citizenwallet.xyz";
 
 export async function GET(request) {
-  const provider = new ethers.providers.JsonRpcProvider(
-    process.env.POLYGON_MUMBAI_RPC_URL
-  );
+  const provider = new ethers.providers.JsonRpcProvider({
+    url: process.env.NEXT_PUBLIC_RPC_URL,
+    skipFetchSetup: true,
+  });
   const voucherWallet = ethers.Wallet.createRandom();
 
   const faucetWallet = new ethers.Wallet(
@@ -36,8 +37,8 @@ export async function GET(request) {
     provider
   );
 
-  const faucetAccountAddress = await accountFactory.getAddress(
-    process.env.FAUCET_PUBLIC_KEY,
+  const faucetAccount = await accountFactory.getAddress(
+    faucetWallet.address,
     0
   );
 
@@ -73,29 +74,28 @@ export async function GET(request) {
     );
   }
 
-  const encryptedWallet = await voucherWallet.encrypt(process.env.SECRET, {
-    scrypt: { N: 2 },
-  });
+  const encryptedWallet = await voucherWallet.encrypt(
+    process.env.NEXT_PUBLIC_VOUCHER_SECRET,
+    {
+      scrypt: { N: 2 },
+    }
+  );
 
-  const params = `alias=${communitySlug}&creator=${process.env.FAUCET_PUBLIC_KEY}`;
-  console.log(">>> encryptedWallet", encryptedWallet);
-  console.log(">>> compressed", compress(encryptedWallet));
-  console.log(">>> compressed params", compress(params));
+  const voucherName = "Top up your account"; // This will appear above the token logo when redeeming the voucher
 
-  //        '$appLink/#/?voucher=$encoded&params=$encodedParams&alias=$alias';
+  const params = `alias=${communitySlug}&creator=${faucetAccount.address}&name=${voucherName}`;
 
-  const voucherUrl = `https://${communityUrl}/#/?voucher=${compress(
-    encryptedWallet
-  )}&params=${compress(params)}&alias=${communitySlug}`;
+  const voucher = `voucher=${compress(encryptedWallet)}&params=${compress(
+    params
+  )}&alias=${communitySlug}`;
 
-  const res = {
-    faucetAccountAddress,
+  const voucherUrl = `https://${communityUrl}/#/?${voucher}`;
+
+  const data = {
+    faucetAccountAddress: faucetAccount.address,
     voucherAccountAddress,
     voucherUrl,
   };
 
-  return new Response(JSON.stringify(res), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return new Response.json(data);
 }
