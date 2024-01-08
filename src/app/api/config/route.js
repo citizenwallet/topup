@@ -1,14 +1,4 @@
-"use server";
-
-let config;
-async function loadConfig() {
-  if (config) return Promise.resolve(config);
-  const res = await fetch(
-    "https://config.internal.citizenwallet.xyz/v3/communities.json"
-  );
-  config = await res.json();
-  return config;
-}
+import { loadConfig } from "@/lib/lib";
 
 export async function GET(request, { params }) {
   const searchParams = request.nextUrl.searchParams;

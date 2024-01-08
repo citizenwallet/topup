@@ -1,5 +1,7 @@
+"use client";
+
 import { ethers } from "ethers";
-import { compress, getConfig } from "./lib";
+import { compress, getClientConfig } from "./lib";
 if (!process.env.NEXT_PUBLIC_VOUCHER_SECRET) {
   console.error("!!! NEXT_PUBLIC_VOUCHER_SECRET not set");
   process.exit(0);
@@ -48,7 +50,7 @@ function v2Voucher(slug, voucherWallet, account) {
 }
 
 export async function createVoucher(communitySlug) {
-  const config = await getConfig(communitySlug);
+  const config = await getClientConfig(communitySlug);
 
   const communityUrl = `${config.community.alias}.citizenwallet.xyz`;
 
