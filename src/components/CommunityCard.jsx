@@ -39,7 +39,7 @@ export default function CommunityCard({ community }) {
     community.slug
   );
   console.log(">>> faucet", faucet);
-
+  console.log(">>> community config", community);
   return (
     <Card className="w-full max-w-md mb-6">
       <CardHeader>
@@ -50,7 +50,11 @@ export default function CommunityCard({ community }) {
         <div className="flex flex-col my-2">
           <label className="mr-1">Faucet address:</label>
           <div className="text-xs text-gray-500">
-            {process.env.NEXT_PUBLIC_FAUCET_ADDRESS}
+            <a
+              href={`${community.config.scan.url}/address/${process.env.NEXT_PUBLIC_FAUCET_ADDRESS}`}
+            >
+              {process.env.NEXT_PUBLIC_FAUCET_ADDRESS}
+            </a>
           </div>
         </div>
         <div className="flex flex-col">

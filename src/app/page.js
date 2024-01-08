@@ -16,14 +16,14 @@ const communities = [
     slug: "zinne",
     formattedFxRate: "1 Zinne = 1 Euro",
     faucetAddress: "0x12187fD1414304fB91622eF2E80325c66Fa8AcE0",
-    config: getConfig("zinne"),
+    config: await getConfig("zinne"),
   },
   {
     name: "Gratitude",
     slug: "gt.celo",
     faucetAddress: "0x12187fD1414304fB91622eF2E80325c66Fa8AcE0",
     formattedFxRate: "Get 10 tokens of gratitude for free",
-    config: getConfig("gt.celo"),
+    config: await getConfig("gt.celo"),
   },
 ];
 

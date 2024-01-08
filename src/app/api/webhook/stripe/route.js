@@ -42,13 +42,7 @@ export async function POST(request) {
       );
       row.fees = event.data.object.amount_total - row.amount;
 
-      const tokenContractAddress =
-        process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS;
-      row.txHash = await transfer(
-        tokenContractAddress,
-        row.amount,
-        row.accountAddress
-      );
+      row.txHash = await transfer("zinne", row.amount, row.accountAddress);
 
       if (process.env.POSTGRES_URL) {
         recordTransferEvent(row);
