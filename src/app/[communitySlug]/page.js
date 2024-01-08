@@ -3,10 +3,17 @@
 import { Packages } from "@/components/packages";
 import { createVoucher } from "@/lib/voucher";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function Page({ params }) {
   const [accountAddress, setAccountAddress] = useState();
   const communitySlug = params.communitySlug;
+
+  const searchParams = useSearchParams();
+
+  const account = searchParams.get("account");
+  const redirectUrl = searchParams.get("redirectUrl");
+
   useEffect(() => {
     const getVoucher = async () => {
       window.voucherLoading = true;
@@ -17,12 +24,20 @@ export default function Page({ params }) {
         "voucherAccountAddress",
         voucher.voucherAccountAddress
       );
-      window.localStorage.setItem("voucherUrl", voucher.voucherUrl);
+      window.localStorage.setItem("redirectUrl", voucher.voucherUrl);
       setAccountAddress(voucher.voucherAccountAddress);
     };
-    // make sure we only create one voucher account
-    if (!window.voucherLoading) getVoucher();
-  }, []);
+
+    if (account) {
+      setAccountAddress(account);
+      window.localStorage.setItem("redirectUrl", redirectUrl);
+      console.log(">>> account", account);
+      console.log(">>> redirectUrl", redirectUrl);
+    } else {
+      // make sure we only create one voucher account
+      if (!window.voucherLoading) getVoucher();
+    }
+  }, [account, redirectUrl, communitySlug]);
 
   const packages = {
     "gt.celo": [

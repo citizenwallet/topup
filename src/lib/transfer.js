@@ -81,8 +81,9 @@ export async function transfer(communitySlug, amount, to) {
     // console.log(`\nhttps://mumbai.polygonscan.com/tx/${tx.hash}`);
 
     // // The transaction is now on chain!
-    // console.log(`Mined in block ${tx.blockNumber}`);
-
+    console.log(">>> waiting for transaction to be mined...", tx.blockNumber);
+    await tx.wait();
+    console.log(`Mined in block ${tx.blockNumber}`);
     return tx.hash;
   } catch (e) {
     console.error(

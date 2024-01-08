@@ -14,7 +14,10 @@ import AccountFactoryAbi from "@/smartcontracts/AccountFactory.abi.json";
 
 export async function createVoucher(communitySlug) {
   const config = await getConfig(communitySlug);
-  const AccountFactoryAddress = config.erc4337.account_factory_address;
+
+  // Uncomment when upgrading to voucher-v2
+  // const AccountFactoryAddress = config.erc4337.account_factory_address;
+  const AccountFactoryAddress = "0x9406Cc6185a346906296840746125a0E44976454"; // Ethereum account factory address
 
   const communityUrl = `${config.community.alias}.citizenwallet.xyz`;
 

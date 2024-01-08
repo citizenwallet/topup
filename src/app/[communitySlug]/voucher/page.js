@@ -9,8 +9,8 @@ export default function Page({ params }) {
 
   useEffect(() => {
     if (cancelled) return;
-    const voucherUrl = window.localStorage.getItem("voucherUrl");
-    router.push(voucherUrl);
+    const redirectUrl = window.localStorage.getItem("redirectUrl");
+    router.push(redirectUrl);
   }, [router, cancelled]);
 
   if (cancelled) {
