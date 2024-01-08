@@ -17,9 +17,11 @@ import { Button } from "@/components/ui/button";
 
 export function Packages({ accountAddress, packages }) {
   const [formattedPackages, setFormattedPackages] = useState([]);
+  const [isItemLoading, setIsItemLoading] = useState("");
 
   useEffect(() => {
     const newPackages = packages.map((pkg) => {
+      pkg.key = `${pkg.amount}-${pkg.buyUrl}`;
       if (pkg.currency) {
         pkg.formattedAmount = formatCurrency(
           pkg.amount,
@@ -44,6 +46,10 @@ export function Packages({ accountAddress, packages }) {
       currency,
     }).format(amount);
   }
+
+  const handleClick = (itemId) => {
+    setIsItemLoading(itemId);
+  };
   // console.log(
   //   ">>> rendering packages for accountAddress",
   //   accountAddress,
@@ -51,8 +57,8 @@ export function Packages({ accountAddress, packages }) {
   // );
   return (
     <main className="flex flex-col items-center p-4">
-      {formattedPackages.map((pkg, i) => (
-        <Card className="w-full max-w-md mb-6" key={`package-${i}`}>
+      {formattedPackages.map((pkg) => (
+        <Card className="w-full max-w-md mb-6" key={pkg.key}>
           <CardHeader>
             <CardTitle>
               {pkg.amount} {pkg.name}
@@ -68,12 +74,22 @@ export function Packages({ accountAddress, packages }) {
             )}
           </CardContent>
           <CardFooter>
-            <Link
-              className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
-              href={pkg.buyUrl}
-            >
-              {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
-            </Link>
+            {pkg.key != isItemLoading ? (
+              <Link
+                className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
+                href={pkg.buyUrl}
+                onClick={() => handleClick(pkg.key)}
+              >
+                {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
+              </Link>
+            ) : (
+              <Button
+                className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
+                disabled
+              >
+                Processing...
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ))}
