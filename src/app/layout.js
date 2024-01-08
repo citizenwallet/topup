@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import Image from "next/image";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -22,14 +22,18 @@ export default function RootLayout({ children }) {
             <div>
               <a href="https://citizenwallet.xyz">
                 <div className="flex justify-center items-center">
-                  <img
+                  <Image
                     src="/citizenwallet-logo-icon.svg"
                     alt="Citizen Wallet"
                     className="w-6 h-6 mr-2"
+                    width={24}
+                    height={24}
                   />
-                  <img
+                  <Image
                     src="/citizenwallet-logo-text.svg"
                     alt="Citizen Wallet"
+                    width={96}
+                    height={24}
                     className="w-24 h-6 mr-2"
                   />
                 </div>
