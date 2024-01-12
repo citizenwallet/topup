@@ -61,6 +61,10 @@ export async function POST(request) {
 
       row.txHash = signature;
 
+      // wait 2 seconds
+      // TODO: remove when we have a better way to wait for the tx to be mined
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // // Based on Stripe fees of 1.5% + 0.25 EUR
       // row.amount = Math.floor(
       //   ((event.data.object.amount_total - 25) / 101.5) * 100

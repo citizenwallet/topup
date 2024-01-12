@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
+import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
 import { getConfig } from "@/lib/lib";
 
 export const dynamic = "force-dynamic";
