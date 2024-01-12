@@ -3,7 +3,7 @@ import { getConfig } from "@/lib/lib";
 import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
 
 export async function transfer(communitySlug, amount, to) {
-  console.log(">>> sending", communitySlug, amount, "to", to);
+  console.log(">>> sending", communitySlug, amount / 100, "to", to);
 
   if (!communitySlug) {
     throw new Error("Missing communitySlug");
@@ -42,7 +42,7 @@ export async function transfer(communitySlug, amount, to) {
   );
   const tokenDecimals = await tokenContract.decimals();
   const tokenSymbol = await tokenContract.symbol();
-  // console.log(">>> tokenSymbol", tokenSymbol, "decimals", tokenDecimals);
+  console.log(">>> tokenSymbol", tokenSymbol, "decimals", tokenDecimals);
 
   const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
   const signer = faucetWallet.connect(provider);
@@ -50,7 +50,6 @@ export async function transfer(communitySlug, amount, to) {
 
   const balance = await tokenContract.balanceOf(signer.address);
 
-  console.log(">>> Sending", amount / 100, tokenSymbol);
   console.log("From:", signer.address, `(balance: ${balance.toString()})`);
   console.log("To:", to);
   console.log("Amount:", amount);
