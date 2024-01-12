@@ -12,7 +12,7 @@ if (!process.env.NEXT_PUBLIC_FAUCET_ACCOUNT) {
   process.exit(0);
 }
 
-import AccountFactoryAbi from "@/smartcontracts/AccountFactory.abi.json";
+import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
 
 const V1_COMMUNITIES = ["zinne"];
 

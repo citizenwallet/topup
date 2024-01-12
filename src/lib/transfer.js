@@ -1,6 +1,6 @@
 import { ethers, Wallet } from "ethers";
 import { getConfig } from "@/lib/lib";
-import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
+import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
 
 export async function transfer(communitySlug, amount, to) {
   console.log(">>> sending", communitySlug, amount, "to", to);
