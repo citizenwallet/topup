@@ -14,6 +14,14 @@
   "zinne": {
     "packages": [
       {
+        "name": "1 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "ZINNE"
+      },
+      {
         "name": "10 ZINNE",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
