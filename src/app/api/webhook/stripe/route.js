@@ -23,7 +23,7 @@ export async function POST(request) {
   console.log(">>> stripe event", event.type);
   switch (event.type) {
     case "checkout.session.completed":
-      console.log(">>> event data", event.type, event.data);
+      console.log(">>> event data", event.type, event.data.object);
 
       const row = {
         processor: "stripe",

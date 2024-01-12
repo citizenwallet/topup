@@ -8,12 +8,6 @@ export default function CreateVoucherComponent({
   account,
   redirectUrl,
 }) {
-  console.log(
-    ">>> CreateVoucherComponent",
-    communitySlug,
-    account,
-    redirectUrl
-  );
   const [accountAddress, setAccountAddress] = useState();
   useEffect(() => {
     const getVoucher = async () => {
@@ -27,6 +21,7 @@ export default function CreateVoucherComponent({
       );
       window.localStorage.setItem("redirectUrl", voucher.voucherUrl);
       setAccountAddress(voucher.voucherAccountAddress);
+      window.voucherLoading = false;
     };
 
     if (account) {
@@ -40,5 +35,5 @@ export default function CreateVoucherComponent({
     }
   }, [account, redirectUrl, communitySlug]);
 
-  return <div>Hello</div>;
+  return <></>;
 }

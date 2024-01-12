@@ -36,8 +36,6 @@ export function Packages({ communitySlug, packages }) {
         );
       }
       pkg.buyUrl = `/${communitySlug}/topup/${pkg.amount}`;
-
-      console.log(">>> pkg", pkg);
       return pkg;
     });
     setFormattedPackages(newPackages);
@@ -63,11 +61,7 @@ export function Packages({ communitySlug, packages }) {
     }
     return false;
   };
-  // console.log(
-  //   ">>> rendering packages for accountAddress",
-  //   accountAddress,
-  //   formattedPackages
-  // );
+
   return (
     <main className="flex flex-col items-center p-4">
       {formattedPackages.map((pkg) => (

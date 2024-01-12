@@ -1,0 +1,48 @@
+{
+  "gt.celo": {
+    "packages": [
+      {
+        "name": "10 Tokens of Gratitude",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 10,
+        "unit": "GRATITUDE"
+      }
+    ]
+  },
+  "zinne": {
+    "packages": [
+      {
+        "name": "10 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 10,
+        "unit": "ZINNE"
+      },
+      {
+        "name": "20 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "ZINNE"
+      },
+      {
+        "name": "50 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 50,
+        "unit": "ZINNE"
+      }
+    ],
+    "stripe": {
+      "prices": {
+        "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
+        "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
+      }
+    }
+  }
+}

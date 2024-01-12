@@ -36,7 +36,7 @@ export async function GET(request, { params }) {
   // console.log(">>> item", params.item);
 
   const redirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
-  const pluginConfig = await getPlugin(params.communitySlug, "topup");
+  const pluginConfig = getPlugin(params.communitySlug, "topup");
   const prices = pluginConfig.stripe.prices;
   const line_items = [
     {

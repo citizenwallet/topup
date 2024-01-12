@@ -1,5 +1,10 @@
 import { gzipSync } from "zlib";
 import { Buffer } from "buffer";
+import topupProdConfig from "../config.json";
+import topupTestConfig from "../config.test.json";
+
+const topupConfig =
+  process.env.NODE_ENV === "production" ? topupProdConfig : topupTestConfig;
 
 const configUrl =
   process.env.NODE_ENV === "production"
@@ -43,11 +48,6 @@ export async function getConfig(communitySlug) {
   return communities.find((c) => c.community.alias === communitySlug);
 }
 
-export async function getPlugin(communitySlug, pluginSlug) {
-  const config = await getConfig(communitySlug);
-  return (
-    config &&
-    config.plugins &&
-    config.plugins.find((plugin) => plugin.slug === pluginSlug)
-  );
+export function getPlugin(communitySlug, pluginSlug) {
+  return topupConfig[communitySlug];
 }
