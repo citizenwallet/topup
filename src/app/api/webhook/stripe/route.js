@@ -2,8 +2,6 @@ import stripe from "stripe";
 import { transfer } from "@/lib/transfer";
 import { recordTransferEvent } from "@/lib/db";
 
-const decimals = 6;
-
 export async function POST(request) {
   const sig = request.headers.get("stripe-signature");
   const body = await request.text();
@@ -22,25 +20,26 @@ export async function POST(request) {
   }
 
   // Handle the event
+  console.log(">>> stripe event", event.type);
   switch (event.type) {
     case "checkout.session.completed":
-      console.log(">>> processing stripe event", event.type);
+      console.log(">>> event data", event.type, event.data);
 
       const row = {
         processor: "stripe",
         processor_id: event.data.object.id,
-        amount: event.data.object.amount_total,
+        amount: event.data.object.amount_total - 100, // We remove the €1 fees
         currency: event.data.object.currency,
         accountAddress: event.data.object.client_reference_id,
         chain: null,
         data: event.data.object,
       };
 
-      // Based on Stripe fees of 1.5% + 0.25 EUR
-      row.amount = Math.floor(
-        ((event.data.object.amount_total - 25) / 101.5) * 100
-      );
-      row.fees = event.data.object.amount_total - row.amount;
+      // // Based on Stripe fees of 1.5% + 0.25 EUR
+      // row.amount = Math.floor(
+      //   ((event.data.object.amount_total - 25) / 101.5) * 100
+      // );
+      // row.fees = event.data.object.amount_total - row.amount;
 
       row.txHash = await transfer("zinne", row.amount, row.accountAddress);
 
@@ -55,5 +54,5 @@ export async function POST(request) {
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  return Response("ok", { status: 200 });
+  return new Response("ok", { status: 200 });
 }

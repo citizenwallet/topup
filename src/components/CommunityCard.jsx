@@ -27,6 +27,10 @@ const networks = {
     name: "Polygon",
     symbol: "MATIC",
   },
+  80001: {
+    name: "Polygon Mumbai",
+    symbol: "MATIC",
+  },
   42220: {
     name: "CELO",
     symbol: "CELO",
@@ -38,8 +42,7 @@ export default function CommunityCard({ community }) {
     process.env.NEXT_PUBLIC_FAUCET_ADDRESS,
     community.slug
   );
-  console.log(">>> faucet", faucet);
-  console.log(">>> community config", community);
+
   return (
     <Card className="w-full max-w-md mb-6">
       <CardHeader>

@@ -1,21 +1,17 @@
 import { redirect } from "next/navigation";
+import { getPlugin } from "@/lib/lib";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 async function createStripeCheckoutSession(
   client_reference_id,
-  item,
+  line_items,
   { cancel_url, success_url }
 ) {
   const request = {
     client_reference_id,
     cancel_url,
-    line_items: [
-      {
-        price: item,
-        quantity: 1,
-      },
-    ],
+    line_items,
     mode: "payment",
     success_url,
   };
@@ -40,10 +36,22 @@ export async function GET(request, { params }) {
   // console.log(">>> item", params.item);
 
   const redirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
+  const pluginConfig = await getPlugin(params.communitySlug, "topup");
+  const prices = pluginConfig.stripe.prices;
+  const line_items = [
+    {
+      price: prices.unit,
+      quantity: parseInt(params.amount, 10),
+    },
+    {
+      price: prices.fees,
+      quantity: 1,
+    },
+  ];
 
   const session = await createStripeCheckoutSession(
     accountAddress,
-    params.item,
+    line_items,
     {
       cancel_url: setUrl(redirectUrl, "cancelled"),
       success_url: setUrl(redirectUrl, "success"),
