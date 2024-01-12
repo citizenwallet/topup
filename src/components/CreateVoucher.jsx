@@ -1,39 +1,34 @@
 "use client";
 
 import { createVoucher } from "@/lib/voucher";
-import { useEffect, useState } from "react";
+
+function store(accountAddress, redirectUrl) {
+  window.localStorage.setItem("accountAddress", accountAddress);
+  window.localStorage.setItem("redirectUrl", redirectUrl);
+}
 
 export default function CreateVoucherComponent({
   communitySlug,
-  account,
+  accountAddress,
   redirectUrl,
 }) {
-  const [accountAddress, setAccountAddress] = useState();
-  useEffect(() => {
-    const getVoucher = async () => {
-      window.voucherLoading = true;
-      console.log(">>> creating voucher for", communitySlug);
-      const voucher = await createVoucher(communitySlug);
-      console.log(">>> voucher created", voucher);
-      window.localStorage.setItem(
-        "voucherAccountAddress",
-        voucher.voucherAccountAddress
-      );
-      window.localStorage.setItem("redirectUrl", voucher.voucherUrl);
-      setAccountAddress(voucher.voucherAccountAddress);
-      window.voucherLoading = false;
-    };
+  const createNewVoucher = async () => {
+    window.voucherLoading = true;
+    console.log(">>> creating voucher for", communitySlug);
+    const voucher = await createVoucher(communitySlug);
+    console.log(">>> voucher created", voucher);
+    store(voucher.voucherAccountAddress, voucher.voucherUrl);
+    window.voucherLoading = false;
+  };
 
-    if (account) {
-      setAccountAddress(account);
-      window.localStorage.setItem("redirectUrl", redirectUrl);
-      console.log(">>> account", account);
-      console.log(">>> redirectUrl", redirectUrl);
-    } else {
-      // make sure we only create one voucher account
-      if (!window.voucherLoading) getVoucher();
-    }
-  }, [account, redirectUrl, communitySlug]);
+  if (accountAddress && redirectUrl) {
+    store(accountAddress, redirectUrl);
+    console.log(">>> accountAddress", accountAddress);
+    console.log(">>> redirectUrl", redirectUrl);
+  } else {
+    // make sure we only create one voucher account
+    if (!window.voucherLoading) createNewVoucher();
+  }
 
   return <></>;
 }
