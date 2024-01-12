@@ -4,8 +4,8 @@ import Image from "next/image";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Monitor Citizen Wallet Transactions",
-  description: "Listen to new transactions on the blockchain",
+  title: "Top up your Citizen Wallet",
+  description: "Get tokens into your wallet!",
 };
 
 export default function RootLayout({ children }) {

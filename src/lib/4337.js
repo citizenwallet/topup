@@ -10,7 +10,11 @@ const accountFactoryInterface = new ethers.utils.Interface(
 const accountInterface = new ethers.utils.Interface(accountContractAbi);
 const erc20Token = new ethers.utils.Interface(tokenContractAbi);
 
-export const transferCallData = (tokenAddress, receiver, amount) =>
+const adjustForDecimals = (amount, decimals) => {
+  return amount * 10 ** decimals;
+};
+
+const transferCallData = (tokenAddress, receiver, amount) =>
   accountInterface.encodeFunctionData("execute", [
     tokenAddress,
     ethers.constants.Zero,
@@ -208,7 +212,19 @@ export const userOpERC20Transfer = async (
 
   const sender = await accountFactoryContract.getAddress(signer.address, 0);
 
-  const callData = transferCallData(config.token.address, to, amount);
+  const erc20Contract = new ethers.Contract(
+    config.token.address,
+    tokenContractAbi,
+    provider
+  );
+
+  const decimals = await erc20Contract.decimals();
+
+  const callData = transferCallData(
+    erc20Contract.address,
+    to,
+    adjustForDecimals(amount, decimals)
+  );
 
   let userop = await prepareUserOp(signer.address, sender, callData, config);
 
@@ -228,4 +244,6 @@ export const userOpERC20Transfer = async (
 
   // submit the user op
   await submitUserOp(config.erc4337, userop);
+
+  return userop.signature;
 };

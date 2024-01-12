@@ -1,5 +1,15 @@
 import { gzipSync } from "zlib";
 import { Buffer } from "buffer";
+import topupProdConfig from "../config.json";
+import topupTestConfig from "../config.test.json";
+
+const topupConfig =
+  process.env.NODE_ENV === "production" ? topupProdConfig : topupTestConfig;
+
+const configUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://config.internal.citizenwallet.xyz/v3/communities.json"
+    : `${process.env.NEXT_PUBLIC_WEBSITE_URL}/communities.test.json`;
 
 export function compress(data) {
   // console.log(">>> typeof data", typeof data, data);
@@ -21,10 +31,9 @@ async function loadClientConfig() {
 }
 export async function loadConfig() {
   if (config) return Promise.resolve(config);
-  const res = await fetch(
-    "https://config.internal.citizenwallet.xyz/v3/communities.json"
-  );
+  const res = await fetch(configUrl);
   config = await res.json();
+
   return config;
 }
 export async function getClientConfig(communitySlug) {
@@ -37,4 +46,8 @@ export async function getConfig(communitySlug) {
   const communities = await loadConfig();
   if (!communitySlug) return communities;
   return communities.find((c) => c.community.alias === communitySlug);
+}
+
+export function getPlugin(communitySlug, pluginSlug) {
+  return topupConfig[communitySlug];
 }

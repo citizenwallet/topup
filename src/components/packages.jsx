@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+
 import {
   CardTitle,
   CardHeader,
@@ -14,31 +14,32 @@ import {
   Card,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-export function Packages({ accountAddress, packages }) {
+export function Packages({ communitySlug, packages }) {
   const [formattedPackages, setFormattedPackages] = useState([]);
   const [isItemLoading, setIsItemLoading] = useState("");
-
+  const router = useRouter();
   useEffect(() => {
     const newPackages = packages.map((pkg) => {
       pkg.key = `${pkg.amount}-${pkg.buyUrl}`;
       if (pkg.currency) {
         pkg.formattedAmount = formatCurrency(
-          pkg.amount,
+          (pkg.unitprice_in_cents * pkg.amount) / 100,
           pkg.currency,
           navigator.language
         );
         pkg.fees = formatCurrency(
-          0.25 + 0.015 * pkg.amount,
+          pkg.fees_in_cents / 100,
           pkg.currency,
           navigator.language
         );
       }
-      pkg.buyUrl += `?accountAddress=${accountAddress}`;
+      pkg.buyUrl = `/${communitySlug}/topup/${pkg.amount}`;
       return pkg;
     });
     setFormattedPackages(newPackages);
-  }, [packages, accountAddress]);
+  }, [packages, communitySlug]);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
@@ -47,41 +48,42 @@ export function Packages({ accountAddress, packages }) {
     }).format(amount);
   }
 
-  const handleClick = (itemId) => {
+  const handleClick = (href, itemId) => {
     setIsItemLoading(itemId);
+    const accountAddress = localStorage.getItem("accountAddress");
+    let goto = href;
+    if (accountAddress) {
+      goto += `?accountAddress=${accountAddress}`;
+      console.log(">>> redirecting to", goto);
+      router.push(goto);
+    } else {
+      console.error("No account address found");
+    }
+    return false;
   };
-  // console.log(
-  //   ">>> rendering packages for accountAddress",
-  //   accountAddress,
-  //   formattedPackages
-  // );
+
   return (
     <main className="flex flex-col items-center p-4">
       {formattedPackages.map((pkg) => (
         <Card className="w-full max-w-md mb-6" key={pkg.key}>
           <CardHeader>
-            <CardTitle>
-              {pkg.amount} {pkg.name}
-            </CardTitle>
+            <CardTitle>{pkg.name}</CardTitle>
             <div className="text-sm text-gray-500">{pkg.formattedFxRate}</div>
           </CardHeader>
           <CardContent className="flex justify-between items-center">
             <div className="text-xl font-semibold">{pkg.formattedAmount}</div>
             {pkg.fees && (
-              <div className="text-sm text-gray-500">
-                +{pkg.fees} (Stripe fees)
-              </div>
+              <div className="text-sm text-gray-500">+{pkg.fees} (fees)</div>
             )}
           </CardContent>
           <CardFooter>
             {pkg.key != isItemLoading ? (
-              <Link
-                className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
-                href={pkg.buyUrl}
-                onClick={() => handleClick(pkg.key)}
+              <a
+                className=" cursor-pointer border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
+                onClick={() => handleClick(pkg.buyUrl, pkg.key)}
               >
                 {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
-              </Link>
+              </a>
             ) : (
               <Button
                 className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"

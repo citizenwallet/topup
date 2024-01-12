@@ -15,6 +15,7 @@ if (!process.env.NEXT_PUBLIC_FAUCET_ACCOUNT) {
 import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
 
 const V1_COMMUNITIES = ["zinne"];
+const voucherName = "Top up your account"; // This will appear above the token logo when redeeming the voucher
 
 async function v1Voucher(slug, voucherWallet) {
   const encryptedWallet = await voucherWallet.encrypt(
@@ -23,8 +24,6 @@ async function v1Voucher(slug, voucherWallet) {
       scrypt: { N: 2 },
     }
   );
-
-  const voucherName = "Top up your account"; // This will appear above the token logo when redeeming the voucher
 
   const params = `alias=${slug}&creator=${process.env.NEXT_PUBLIC_FAUCET_ACCOUNT}&name=${voucherName}`;
 
@@ -37,11 +36,7 @@ async function v1Voucher(slug, voucherWallet) {
 
 function v2Voucher(slug, voucherWallet, account) {
   const { privateKey } = voucherWallet;
-
-  const voucherName = "Top up your account"; // This will appear above the token logo when redeeming the voucher
-
   const params = `alias=${slug}&creator=${process.env.NEXT_PUBLIC_FAUCET_ACCOUNT}&name=${voucherName}&account=${account}`;
-
   const voucher = `voucher=${compress(`v2-${privateKey}`)}&params=${compress(
     params
   )}&alias=${slug}`;
@@ -73,13 +68,19 @@ export async function createVoucher(communitySlug) {
     provider
   );
 
+  console.log(
+    ">>> Getting voucher account address for publicAddress",
+    voucherWallet.address
+  );
+  console.log("using AccountFactoryAddress", AccountFactoryAddress);
   const voucherAccountAddress = await accountFactory.getAddress(
     voucherWallet.address,
     0
   );
+  console.log(">>> voucherAccountAddress", voucherAccountAddress);
 
   const voucher = isV1Voucher
-    ? v1Voucher(communitySlug, voucherWallet)
+    ? await v1Voucher(communitySlug, voucherWallet)
     : v2Voucher(communitySlug, voucherWallet, voucherAccountAddress);
 
   const voucherUrl = `https://${communityUrl}/#/?${voucher}`;
