@@ -50,10 +50,10 @@ export function Packages({ communitySlug, packages }) {
 
   const handleClick = (href, itemId) => {
     setIsItemLoading(itemId);
-    const voucherAccountAddress = localStorage.getItem("voucherAccountAddress");
+    const accountAddress = localStorage.getItem("accountAddress");
     let goto = href;
-    if (voucherAccountAddress) {
-      goto += `?accountAddress=${voucherAccountAddress}`;
+    if (accountAddress) {
+      goto += `?accountAddress=${accountAddress}`;
       console.log(">>> redirecting to", goto);
       router.push(goto);
     } else {
