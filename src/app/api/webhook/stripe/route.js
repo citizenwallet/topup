@@ -23,7 +23,6 @@ export async function POST(request) {
   }
 
   // Handle the event
-  console.log(">>> stripe event", event.type);
   switch (event.type) {
     case "checkout.session.completed":
       console.log(">>> event data", event.type, event.data.object);
@@ -56,14 +55,10 @@ export async function POST(request) {
         provider,
         signer,
         row.accountAddress,
-        row.amount
+        row.amount / 100
       );
 
       row.txHash = signature;
-
-      // wait 2 seconds
-      // TODO: remove when we have a better way to wait for the tx to be mined
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // // Based on Stripe fees of 1.5% + 0.25 EUR
       // row.amount = Math.floor(

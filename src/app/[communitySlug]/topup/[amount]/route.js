@@ -79,10 +79,6 @@ export async function GET(request, { params }) {
       );
 
       row.txHash = signature;
-
-      // wait 2 seconds
-      // TODO: remove when we have a better way to wait for the tx to be mined
-      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (e) {
       console.log("!!! topup error", e);
       return error(e.message);
