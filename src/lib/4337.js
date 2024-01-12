@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import tokenEntryPointContractAbi from "smartcontracts/build/contracts/tokenEntryPoint/TokenEntryPoint.abi";
 import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
 import accountContractAbi from "smartcontracts/build/contracts/account/Account.abi";
 import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
@@ -16,23 +17,60 @@ export const transferCallData = (tokenAddress, receiver, amount) =>
     erc20Token.encodeFunctionData("transfer", [receiver, amount]),
   ]);
 
-const generateNonce = () => {
-  // Generate a random 24-byte value
-  const randomBytes = ethers.utils.randomBytes(24);
+const userOpToJson = (userop) => {
+  const newUserop = {
+    sender: userop.sender,
+    nonce: userop.nonce.toHexString().replace("0x0", "0x"),
+    initCode: ethers.utils.hexlify(userop.initCode),
+    callData: ethers.utils.hexlify(userop.callData),
+    callGasLimit: userop.callGasLimit.toHexString().replace("0x0", "0x"),
+    verificationGasLimit: userop.verificationGasLimit
+      .toHexString()
+      .replace("0x0", "0x"),
+    preVerificationGas: userop.preVerificationGas
+      .toHexString()
+      .replace("0x0", "0x"),
+    maxFeePerGas: userop.maxFeePerGas.toHexString().replace("0x0", "0x"),
+    maxPriorityFeePerGas: userop.maxPriorityFeePerGas
+      .toHexString()
+      .replace("0x0", "0x"),
+    paymasterAndData: ethers.utils.hexlify(userop.paymasterAndData),
+    signature: ethers.utils.hexlify(userop.signature),
+  };
 
-  // Interpret the random bytes as a uint192
-  const key = ethers.BigNumber.from(randomBytes);
+  return newUserop;
+};
 
-  const seq = ethers.BigNumber.from("0");
+const userOpFromJson = (userop) => {
+  const newUserop = {
+    sender: userop.sender,
+    nonce: ethers.BigNumber.from(userop.nonce),
+    initCode: ethers.utils.arrayify(userop.initCode),
+    callData: ethers.utils.arrayify(userop.callData),
+    callGasLimit: ethers.BigNumber.from(userop.callGasLimit),
+    verificationGasLimit: ethers.BigNumber.from(userop.verificationGasLimit),
+    preVerificationGas: ethers.BigNumber.from(userop.preVerificationGas),
+    maxFeePerGas: ethers.BigNumber.from(userop.maxFeePerGas),
+    maxPriorityFeePerGas: ethers.BigNumber.from(userop.maxPriorityFeePerGas),
+    paymasterAndData: ethers.utils.arrayify(userop.paymasterAndData),
+    signature: ethers.utils.arrayify(userop.signature),
+  };
 
-  const nonce = key.shl(64).add(seq);
+  return newUserop;
+};
 
-  return nonce;
+const senderAccountExists = async (indexer, sender) => {
+  const url = `${indexer.url}/accounts/${sender}/exists`;
+
+  const resp = await fetch(url);
+
+  return resp.status === 200;
 };
 
 const generateUserOp = (
   signerAddress,
   sender,
+  senderAccountExists = false,
   accountFactoryAddress,
   callData
 ) => {
@@ -50,11 +88,8 @@ const generateUserOp = (
     signature: ethers.utils.arrayify("0x"),
   };
 
-  // check that the sender's account exists
-  const exists = false; //  nonce.mask(64); // "/accounts/{acc_addr}/exists"
-
   // initCode
-  if (!exists) {
+  if (!senderAccountExists) {
     const accountCreationCode = accountFactoryInterface.encodeFunctionData(
       "createAccount",
       [signerAddress, ethers.BigNumber.from(0)]
@@ -72,12 +107,11 @@ const generateUserOp = (
   return userop;
 };
 
-export const prepareUserOp = async (
-  provider,
+const prepareUserOp = async (
   owner,
   sender,
   callData,
-  { erc4337, token }
+  { indexer, erc4337, token }
 ) => {
   if (erc4337 === undefined || token === undefined) {
     throw new Error("Invalid config object");
@@ -85,43 +119,113 @@ export const prepareUserOp = async (
 
   const accountFactoryAddress = erc4337.account_factory_address;
 
+  // check that the sender's account exists
+  const exists = senderAccountExists(indexer, sender);
+
   // generate a userop
-  const userop = generateUserOp(owner, sender, accountFactoryAddress, callData);
+  const userop = generateUserOp(
+    owner,
+    sender,
+    exists,
+    accountFactoryAddress,
+    callData
+  );
 
   return userop;
 };
 
-export const paymasterSignUserOp = async (erc4337, userop) => {
-  console.log("URL:", `${erc4337.rpc_url}/${erc4337.paymaster_address}`);
+const paymasterSignUserOp = async (erc4337, userop) => {
+  const rpcUrl = `${erc4337.rpc_url}/${erc4337.paymaster_address}`;
+
   const body = {
-    method: "pm_sponsorUserOperation",
+    jsonrpc: "2.0",
+    id: 1,
+    method: "pm_ooSponsorUserOperation",
     params: [
-      userop,
+      userOpToJson(userop),
       erc4337.entrypoint_address,
       { type: erc4337.paymaster_type },
+      1,
     ],
   };
 
-  const resp = await fetch(`${erc4337.rpc_url}/${erc4337.paymaster_address}`, {
+  const resp = await fetch(rpcUrl, {
     method: "POST",
     body: JSON.stringify(body),
   });
-  console.log(resp.status, resp.statusText);
+
+  if (resp.status !== 200) throw new Error(response.error.message);
+
   const response = await resp.json();
 
-  console.log(response);
+  if (!response?.result?.length) {
+    throw new Error("Invalid response");
+  }
+
+  return userOpFromJson(response.result[0]);
+};
+
+const submitUserOp = async (erc4337, userop) => {
+  const rpcUrl = `${erc4337.rpc_url}/${erc4337.paymaster_address}`;
+
+  const body = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "eth_sendUserOperation",
+    params: [userOpToJson(userop), erc4337.entrypoint_address],
+  };
+
+  const resp = await fetch(rpcUrl, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+  if (resp.status !== 200) throw new Error(response.error.message);
 
   return userop;
 };
 
-export const submitUserOp = async (rpcUrl, userop) => {
-  return userop;
-};
-
-export const signUserOp = async (userop, tokenEntryPointContract, signer) => {
+const signUserOp = async (userop, tokenEntryPointContract, signer) => {
   const userOpHash = ethers.utils.arrayify(
     await tokenEntryPointContract.getUserOpHash(userop)
   );
 
   return await signer.signMessage(userOpHash);
+};
+
+export const userOpERC20Transfer = async (
+  config,
+  provider,
+  signer,
+  to,
+  amount
+) => {
+  const accountFactoryContract = new ethers.Contract(
+    config.erc4337.account_factory_address,
+    accountFactoryContractAbi,
+    provider
+  );
+
+  const sender = await accountFactoryContract.getAddress(signer.address, 0);
+
+  const callData = transferCallData(config.token.address, to, amount);
+
+  let userop = await prepareUserOp(signer.address, sender, callData, config);
+
+  // get the paymaster to sign the userop
+  userop = await paymasterSignUserOp(config.erc4337, userop);
+
+  const tokenEntryPointContract = new ethers.Contract(
+    config.erc4337.entrypoint_address,
+    tokenEntryPointContractAbi,
+    provider
+  );
+
+  // sign the userop
+  const signature = await signUserOp(userop, tokenEntryPointContract, signer);
+
+  userop.signature = signature;
+
+  // submit the user op
+  await submitUserOp(config.erc4337, userop);
 };
