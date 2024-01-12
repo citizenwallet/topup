@@ -1,5 +1,4 @@
 import stripe from "stripe";
-import { transfer } from "@/lib/transfer";
 import { recordTransferEvent } from "@/lib/db";
 import { getConfig } from "@/lib/lib";
 import { Wallet, ethers } from "ethers";
