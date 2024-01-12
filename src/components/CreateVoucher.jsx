@@ -12,6 +12,8 @@ export default function CreateVoucherComponent({
   accountAddress,
   redirectUrl,
 }) {
+  if (typeof window === "undefined") return <></>;
+
   const createNewVoucher = async () => {
     window.voucherLoading = true;
     console.log(">>> creating voucher for", communitySlug);
