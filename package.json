@@ -23,6 +23,7 @@
     "node-env": "^0.1.6",
     "react": "^18",
     "react-dom": "^18",
+    "smartcontracts": "github:citizenwallet/smartcontracts#v0.0.65",
     "stripe": "^14.5.0",
     "swr": "^2.2.4",
     "tailwind-merge": "^2.2.0",
@@ -33,6 +34,7 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
+    "json-loader": "^0.5.7",
     "postcss": "^8",
     "tailwindcss": "^3.3.0"
   }

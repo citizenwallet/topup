@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 
-import tokenContractAbi from "@/smartcontracts/erc20.abi.json";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
+import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
 import { getConfig } from "@/lib/lib";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req, res) {
   const { searchParams } = new URL(req.url);
-  let account = searchParams.get("account");
   const communitySlug = searchParams.get("communitySlug");
 
   if (!communitySlug) {
@@ -40,10 +40,16 @@ export async function GET(req, res) {
 
   const gasPrice = await provider.getGasPrice();
 
-  if (!account) {
-    const signer = new ethers.Wallet(process.env.FAUCET_PRIVATE_KEY, provider);
-    account = signer.address;
-  }
+  const signer = new ethers.Wallet(process.env.FAUCET_PRIVATE_KEY, provider);
+  const address = signer.address;
+
+  const accountFactoryContract = new ethers.Contract(
+    config.erc4337.account_factory_address,
+    accountFactoryContractAbi,
+    provider
+  );
+
+  const account = await accountFactoryContract.getAddress(address, 0);
 
   const tokenContract = new ethers.Contract(
     tokenContractAddress,
@@ -51,7 +57,7 @@ export async function GET(req, res) {
     provider
   );
 
-  const nativeBalance = await provider.getBalance(account);
+  const nativeBalance = await provider.getBalance(address);
   const network = await provider.getNetwork();
   const balance = await tokenContract.balanceOf(account);
   const tokenSymbol = await tokenContract.symbol();
@@ -68,6 +74,7 @@ export async function GET(req, res) {
   ).toFixed(2);
 
   const data = {
+    address,
     account,
     tokenContractAddress,
     tokenSymbol,

@@ -1,7 +1,8 @@
-import { getPlugin } from "@/lib/lib";
-import { transfer } from "@/lib/transfer";
+import { getConfig, getPlugin } from "@/lib/lib";
 import { recordTransferEvent } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { userOpERC20Transfer } from "@/lib/4337";
+import { Wallet, ethers } from "ethers";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -56,11 +57,28 @@ export async function GET(request, { params }) {
     console.log(">>> topup", row);
 
     try {
-      row.txHash = await transfer(
-        communitySlug,
-        row.amount,
-        row.accountAddress
+      const config = await getConfig(communitySlug);
+      if (!config) {
+        throw new Error(`Community not found (${communitySlug})`);
+      }
+
+      const provider = new ethers.providers.JsonRpcProvider({
+        url: config.node.url,
+        skipFetchSetup: true,
+      });
+
+      const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
+      const signer = faucetWallet.connect(provider);
+
+      const signature = await userOpERC20Transfer(
+        config,
+        provider,
+        signer,
+        accountAddress,
+        amount
       );
+
+      row.txHash = signature;
     } catch (e) {
       console.log("!!! topup error", e);
       return error(e.message);
