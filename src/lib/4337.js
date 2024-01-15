@@ -67,7 +67,6 @@ const senderAccountExists = async (indexer, sender) => {
   const url = `${indexer.url}/accounts/${sender}/exists`;
 
   const resp = await fetch(url);
-
   return resp.status === 200;
 };
 
@@ -124,7 +123,7 @@ const prepareUserOp = async (
   const accountFactoryAddress = erc4337.account_factory_address;
 
   // check that the sender's account exists
-  const exists = senderAccountExists(indexer, sender);
+  const exists = await senderAccountExists(indexer, sender);
 
   // generate a userop
   const userop = generateUserOp(

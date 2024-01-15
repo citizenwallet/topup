@@ -31,8 +31,8 @@ export async function GET(req, res) {
     );
   }
 
-  console.log(">>> connecting to", config.node.url);
-  console.log(">>> token contract address", tokenContractAddress);
+  // console.log(">>> connecting to", config.node.url);
+  // console.log(">>> token contract address", tokenContractAddress);
   const provider = new ethers.providers.JsonRpcProvider({
     url: config.node.url,
     skipFetchSetup: true,
@@ -62,12 +62,12 @@ export async function GET(req, res) {
   const balance = await tokenContract.balanceOf(account);
   const tokenSymbol = await tokenContract.symbol();
   const tokenDecimals = await tokenContract.decimals();
-  console.log(">>> tokenContractAddress", tokenContractAddress);
-  console.log(">>> tokenSymbol", tokenSymbol);
-  console.log(">>> tokenDecimals", parseInt(tokenDecimals, 10));
-  console.log("Account:", account);
-  console.log("Balance:", balance.toString());
-  console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"));
+  // console.log(">>> tokenContractAddress", tokenContractAddress);
+  // console.log(">>> tokenSymbol", tokenSymbol);
+  // console.log(">>> tokenDecimals", parseInt(tokenDecimals, 10));
+  // console.log("Account:", account);
+  // console.log("Balance:", balance.toString());
+  // console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"));
   const decimals = parseInt(tokenDecimals, 10);
   const formattedBalance = parseFloat(
     ethers.utils.formatUnits(balance, tokenDecimals)
