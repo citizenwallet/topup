@@ -14,10 +14,10 @@ export default async function Home() {
   const communities = [
     {
       name: "Zinne",
-      slug: "zinne",
+      slug: "zinnetest",
       formattedFxRate: "1 Zinne = 1 Euro",
       faucetAddress: "0x12187fD1414304fB91622eF2E80325c66Fa8AcE0",
-      config: await getConfig("zinne"),
+      config: await getConfig("zinnetest"),
     },
     {
       name: "Gratitude",

@@ -157,7 +157,7 @@ const paymasterSignUserOp = async (erc4337, userop) => {
     body: JSON.stringify(body),
   });
 
-  if (resp.status !== 200) throw new Error(response.error.message);
+  if (resp.status !== 200) throw new Error(JSON.stringify(resp, null, 2));
 
   const response = await resp.json();
 

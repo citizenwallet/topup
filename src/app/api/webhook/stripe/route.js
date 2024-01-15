@@ -4,6 +4,13 @@ import { getConfig } from "@/lib/lib";
 import { Wallet, ethers } from "ethers";
 import { userOpERC20Transfer } from "@/lib/4337";
 
+function getCommunitySlugFromUrl(url) {
+  const urlObject = new URL(url);
+  const path = urlObject.pathname;
+  const pathParts = path.split("/");
+  return pathParts[1];
+}
+
 export async function POST(request) {
   const sig = request.headers.get("stripe-signature");
   const body = await request.text();
@@ -26,7 +33,11 @@ export async function POST(request) {
     case "checkout.session.completed":
       console.log(">>> event data", event.type, event.data.object);
 
+      const communitySlug = getCommunitySlugFromUrl(
+        event.data.object.success_url
+      );
       const row = {
+        communitySlug,
         processor: "stripe",
         processor_id: event.data.object.id,
         amount: event.data.object.amount_total - 100, // We remove the €1 fees
@@ -58,14 +69,6 @@ export async function POST(request) {
       );
 
       row.txHash = signature;
-
-      // // Based on Stripe fees of 1.5% + 0.25 EUR
-      // row.amount = Math.floor(
-      //   ((event.data.object.amount_total - 25) / 101.5) * 100
-      // );
-      // row.fees = event.data.object.amount_total - row.amount;
-
-      // row.txHash = await transfer("zinne", row.amount, row.accountAddress);
 
       if (process.env.POSTGRES_URL) {
         recordTransferEvent(row);

@@ -48,6 +48,7 @@ export async function GET(request, { params }) {
 
   if (!pluginConfig.stripe) {
     const row = {
+      communitySlug,
       processor: "topup",
       amount: amount * 100, // we use cents
       accountAddress,

@@ -11,6 +11,8 @@ const configUrl =
     ? "https://config.internal.citizenwallet.xyz/v3/communities.json"
     : `${process.env.NEXT_PUBLIC_WEBSITE_URL}/communities.test.json`;
 
+console.log(">>> configUrl", configUrl);
+
 export function compress(data) {
   // console.log(">>> typeof data", typeof data, data);
   const encodedData = Buffer.from(data, "utf8");

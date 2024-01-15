@@ -83,7 +83,12 @@ export async function createVoucher(communitySlug) {
     ? await v1Voucher(communitySlug, voucherWallet)
     : v2Voucher(communitySlug, voucherWallet, voucherAccountAddress);
 
-  const voucherUrl = `https://${communityUrl}/#/?${voucher}`;
+  let voucherUrl;
+  if (process.env.NODE_ENV === "development") {
+    voucherUrl = `http://localhost:54401/#/?${voucher}`;
+  } else {
+    voucherUrl = `https://${communityUrl}/#/?${voucher}`;
+  }
   console.log(">>> voucherUrl", voucherUrl);
   return {
     voucherUrl,
