@@ -52,9 +52,7 @@ export default function CommunityCard({ community }) {
     <Card className="w-full max-w-md mb-6">
       <CardHeader>
         <CardTitle>{community.name}</CardTitle>
-        <div className="text-sm text-gray-500">
-          {community.description || community.formattedFxRate}
-        </div>
+        <div className="text-sm text-gray-500">{community.description}</div>
       </CardHeader>
       {faucet && (
         <CardContent className="flex flex-col">

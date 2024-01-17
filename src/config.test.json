@@ -6,15 +6,15 @@
       "chainId": 44787
     },
     {
-      "name": "Zinne",
+      "name": "Zinne Test",
       "slug": "zinnetest",
-      "formattedFxRate": "1 Zinne = 1 Euro",
+      "description": "1 Zinne = 1 Euro",
       "chainId": 80001
     },
     {
       "name": "Gratitude",
       "slug": "gt.celo",
-      "formattedFxRate": "Get 10 tokens of gratitude for free",
+      "description": "Get 10 tokens of gratitude for free",
       "chainId": 42220
     }
   ],

@@ -2,23 +2,23 @@
   "communities": [
     {
       "name": "Bonne Heure Test",
-      "slug": "selcoupdepouce-test",
+      "slug": "selcoupdepouce",
       "chainId": 44787
     },
     {
       "name": "Zinne",
-      "slug": "zinnetest",
-      "formattedFxRate": "1 Zinne = 1 Euro",
+      "slug": "zinne",
+      "description": "1 Zinne = 1 Euro",
       "chainId": 80001
     },
     {
       "name": "Gratitude",
       "slug": "gt.celo",
-      "formattedFxRate": "Get 10 tokens of gratitude for free",
+      "description": "Get 10 tokens of gratitude for free",
       "chainId": 42220
     }
   ],
-  "selcoupdepouce-test": {
+  "selcoupdepouce": {
     "packages": [
       {
         "name": "100 Bonne Heure",

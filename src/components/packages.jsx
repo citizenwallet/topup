@@ -68,9 +68,7 @@ export function Packages({ communitySlug, packages }) {
         <Card className="w-full max-w-md mb-6" key={pkg.key}>
           <CardHeader>
             <CardTitle>{pkg.name}</CardTitle>
-            <div className="text-sm text-gray-500">
-              {pkg.description || pkg.formattedFxRate}
-            </div>
+            <div className="text-sm text-gray-500">{pkg.description}</div>
           </CardHeader>
           {pkg.unitprice_in_cents > 0 && (
             <CardContent className="flex justify-between items-center">
