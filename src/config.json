@@ -1,9 +1,9 @@
 {
   "communities": [
     {
-      "name": "Bonne Heure Test",
+      "name": "Bonne Heure",
       "slug": "selcoupdepouce",
-      "chainId": 44787
+      "chainId": 42220
     },
     {
       "name": "Zinne",

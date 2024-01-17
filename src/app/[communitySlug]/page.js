@@ -10,6 +10,15 @@ export default async function Page({ params, searchParams }) {
 
   const pluginConfig = getPlugin(communitySlug, "topup");
 
+  if (!pluginConfig) {
+    return (
+      <div className="p-4">
+        <h1 className="text-xl font-bold my-6">Error</h1>
+        <p>No configuration found for {communitySlug}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold my-6 text-center">

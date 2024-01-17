@@ -85,7 +85,7 @@ export async function createVoucher(communitySlug) {
 
   let voucherUrl;
   if (process.env.NODE_ENV === "development") {
-    voucherUrl = `http://localhost:54401/#/?${voucher}`;
+    voucherUrl = `${process.env.NEXT_PUBLIC_WALLET_APP_URL}/#/?${voucher}`;
   } else {
     voucherUrl = `https://${communityUrl}/#/?${voucher}`;
   }
