@@ -26,14 +26,22 @@ const networks = {
   137: {
     name: "Polygon",
     symbol: "MATIC",
+    explorer: "https://polygonscan.com",
   },
   80001: {
     name: "Polygon Mumbai",
     symbol: "MATIC",
+    explorer: "https://mumbai.polygonscan.com",
   },
   42220: {
     name: "CELO",
     symbol: "CELO",
+    explorer: "https://celoscan.io",
+  },
+  44787: {
+    name: "CELO Alfajores",
+    symbol: "CELO",
+    explorer: "https://alfajores.celoscan.io",
   },
 };
 
@@ -44,25 +52,52 @@ export default function CommunityCard({ community }) {
     <Card className="w-full max-w-md mb-6">
       <CardHeader>
         <CardTitle>{community.name}</CardTitle>
-        <div className="text-sm text-gray-500">{community.formattedFxRate}</div>
+        <div className="text-sm text-gray-500">
+          {community.description || community.formattedFxRate}
+        </div>
       </CardHeader>
       {faucet && (
         <CardContent className="flex flex-col">
           <div className="flex flex-col my-2">
-            <label className="mr-1">Faucet address:</label>
+            <label className="mr-1">Sponsor wallet address:</label>
             <div className="text-xs text-gray-500">
               <a
-                href={`${community.config.scan.url}/address/${faucet.address}`}
+                href={`${networks[community.chainId].explorer}/address/${
+                  faucet.sponsorAddress
+                }`}
               >
-                {faucet.address}
+                {faucet.sponsorAddress}
               </a>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="mr-1">Balance:</label>
+            <div className="text-xs">
+              {!isLoading && !isError && faucet && (
+                <div className="text-sm text-gray-500">
+                  <div>
+                    <a
+                      href={`${networks[community.chainId].explorer}/address/${
+                        faucet.sponsorAddress
+                      }`}
+                    >
+                      {faucet.nativeBalance}
+                      {` `}
+
+                      {networks[faucet.chainId].symbol}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-col my-2">
             <label className="mr-1">Faucet account address:</label>
             <div className="text-xs text-gray-500">
               <a
-                href={`${community.config.scan.url}/address/${faucet.account}`}
+                href={`${networks[community.chainId].explorer}/address/${
+                  faucet.account
+                }`}
               >
                 {faucet.account}
               </a>
@@ -74,10 +109,14 @@ export default function CommunityCard({ community }) {
               {!isLoading && !isError && faucet && (
                 <div className="text-sm text-gray-500">
                   <div>
-                    {faucet.nativeBalance} {networks[faucet.chainId].symbol}
-                  </div>
-                  <div>
-                    {faucet.balance} {faucet.tokenSymbol}
+                    {faucet.balance}{" "}
+                    <a
+                      href={`${networks[community.chainId].explorer}/address/${
+                        faucet.tokenContractAddress
+                      }`}
+                    >
+                      {faucet.tokenSymbol}
+                    </a>
                   </div>
                 </div>
               )}

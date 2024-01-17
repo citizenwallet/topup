@@ -6,6 +6,16 @@ import { getConfig } from "@/lib/lib";
 
 export const dynamic = "force-dynamic";
 
+async function getSponsorAddress(paymasterContractAddress, provider) {
+  const abi = ["function sponsor() public view returns (address)"];
+
+  const contract = new ethers.Contract(paymasterContractAddress, abi, provider);
+
+  const sponsorAddress = await contract.sponsor();
+
+  return sponsorAddress;
+}
+
 export async function GET(req, res) {
   const { searchParams } = new URL(req.url);
   const communitySlug = searchParams.get("communitySlug");
@@ -38,6 +48,11 @@ export async function GET(req, res) {
     skipFetchSetup: true,
   });
 
+  const sponsorAddress = await getSponsorAddress(
+    config.erc4337.paymaster_address,
+    provider
+  );
+
   const gasPrice = await provider.getGasPrice();
 
   const signer = new ethers.Wallet(process.env.FAUCET_PRIVATE_KEY, provider);
@@ -57,7 +72,7 @@ export async function GET(req, res) {
     provider
   );
 
-  const nativeBalance = await provider.getBalance(address);
+  const nativeBalance = await provider.getBalance(sponsorAddress);
   const network = await provider.getNetwork();
   const balance = await tokenContract.balanceOf(account);
   const tokenSymbol = await tokenContract.symbol();
@@ -80,6 +95,7 @@ export async function GET(req, res) {
     tokenSymbol,
     tokenDecimals: decimals,
     balance: formattedBalance,
+    sponsorAddress,
     nativeBalance: ethers.utils.formatEther(nativeBalance),
     chainId: network.chainId,
     config,

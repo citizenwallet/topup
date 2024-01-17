@@ -8,25 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CommunityCard from "@/components/CommunityCard";
-import { getConfig } from "@/lib/lib";
+import { getTopupServerConfig } from "@/lib/lib";
 
 export default async function Home() {
-  const communities = [
-    {
-      name: "Zinne",
-      slug: "zinne",
-      formattedFxRate: "1 Zinne = 1 Euro",
-      faucetAddress: "0x12187fD1414304fB91622eF2E80325c66Fa8AcE0",
-      config: await getConfig("zinne"),
-    },
-    {
-      name: "Gratitude",
-      slug: "gt.celo",
-      faucetAddress: "0x12187fD1414304fB91622eF2E80325c66Fa8AcE0",
-      formattedFxRate: "Get 10 tokens of gratitude for free",
-      config: await getConfig("gt.celo"),
-    },
-  ];
+  const config = await getTopupServerConfig();
 
   return (
     <main className="flex flex-col p-4">
@@ -35,7 +20,7 @@ export default async function Home() {
       </h1>
       <h2 className="text-xl font-bold mb-4">Choose your community currency</h2>
       <div className="m-4">
-        {communities.map((community, i) => (
+        {config.communities.map((community, i) => (
           <CommunityCard community={community} key={`community-${i}`} />
         ))}
       </div>

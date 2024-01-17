@@ -11,8 +11,6 @@ const configUrl =
     ? "https://config.internal.citizenwallet.xyz/v3/communities.json"
     : `${process.env.NEXT_PUBLIC_WEBSITE_URL}/communities.test.json`;
 
-console.log(">>> configUrl", configUrl);
-
 export function compress(data) {
   // console.log(">>> typeof data", typeof data, data);
   const encodedData = Buffer.from(data, "utf8");
@@ -48,6 +46,10 @@ export async function getConfig(communitySlug) {
   const communities = await loadConfig();
   if (!communitySlug) return communities;
   return communities.find((c) => c.community.alias === communitySlug);
+}
+
+export function getTopupServerConfig() {
+  return topupConfig;
 }
 
 export function getPlugin(communitySlug, pluginSlug) {
