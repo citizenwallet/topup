@@ -157,7 +157,7 @@ const paymasterSignUserOp = async (erc4337, userop) => {
     body: JSON.stringify(body),
   });
 
-  if (resp.status !== 200) throw new Error(JSON.stringify(resp, null, 2));
+  if (resp.status !== 200) throw new Error(resp.statusText);
 
   const response = await resp.json();
 
@@ -171,11 +171,13 @@ const paymasterSignUserOp = async (erc4337, userop) => {
 const submitUserOp = async (erc4337, userop) => {
   const rpcUrl = `${erc4337.rpc_url}/${erc4337.paymaster_address}`;
 
+  const extraData = { description: "top up" };
+
   const body = {
     jsonrpc: "2.0",
     id: 1,
     method: "eth_sendUserOperation",
-    params: [userOpToJson(userop), erc4337.entrypoint_address],
+    params: [userOpToJson(userop), erc4337.entrypoint_address, extraData],
   };
 
   const resp = await fetch(rpcUrl, {
@@ -183,7 +185,7 @@ const submitUserOp = async (erc4337, userop) => {
     body: JSON.stringify(body),
   });
 
-  if (resp.status !== 200) throw new Error(response.error.message);
+  if (resp.status !== 200) throw new Error(resp.statusText);
 
   return userop;
 };
