@@ -1,10 +1,11 @@
 import { sql } from "@vercel/postgres";
 
 export async function recordTransferEvent(event) {
+  event.event = "transfer";
   console.log(">>> recordTransferEvent", event);
   const client = await sql.connect();
   const query = {
-    text: `INSERT INTO transfer_events ("${Object.keys(event).join(
+    text: `INSERT INTO blockchain_events ("${Object.keys(event).join(
       '","'
     )}") VALUES (${Object.keys(event)
       .map((r, i) => `\$${i + 1}`)

@@ -68,7 +68,7 @@ export async function POST(request) {
         row.amount / 100
       );
 
-      row.txHash = signature;
+      row.signature = signature;
 
       if (process.env.POSTGRES_URL) {
         recordTransferEvent(row);

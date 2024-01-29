@@ -79,7 +79,7 @@ export async function GET(request, { params }) {
         amount
       );
 
-      row.txHash = signature;
+      row.signature = signature;
     } catch (e) {
       console.log("!!! topup error", e);
       return error(e.message);
