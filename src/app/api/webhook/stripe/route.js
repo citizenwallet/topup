@@ -31,7 +31,7 @@ export async function POST(request) {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
-      console.log(">>> event data", event.type, event.data.object);
+      // console.log(">>> event data", event.type, event.data.object);
 
       const communitySlug = getCommunitySlugFromUrl(
         event.data.object.success_url
@@ -40,7 +40,7 @@ export async function POST(request) {
         communitySlug,
         processor: "stripe",
         processor_id: event.data.object.id,
-        amount: event.data.object.amount_total - 100, // We remove the €1 fees
+        amount: parseInt(event.data.object.metadata.amount),
         currency: event.data.object.currency,
         accountAddress: event.data.object.client_reference_id,
         chain: null,
@@ -65,7 +65,7 @@ export async function POST(request) {
         provider,
         signer,
         row.accountAddress,
-        row.amount / 100
+        row.amount
       );
 
       row.signature = signature;

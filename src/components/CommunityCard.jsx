@@ -9,41 +9,8 @@ import {
   Card,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import useSWR from "swr";
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
-function useFaucet(communitySlug) {
-  const apicall = `/api/balance?communitySlug=${communitySlug}`;
-  const { data, error, isLoading } = useSWR(apicall, fetcher);
-  return {
-    faucet: data,
-    isLoading,
-    isError: error,
-  };
-}
-
-const networks = {
-  137: {
-    name: "Polygon",
-    symbol: "MATIC",
-    explorer: "https://polygonscan.com",
-  },
-  80001: {
-    name: "Polygon Mumbai",
-    symbol: "MATIC",
-    explorer: "https://mumbai.polygonscan.com",
-  },
-  42220: {
-    name: "CELO",
-    symbol: "CELO",
-    explorer: "https://celoscan.io",
-  },
-  44787: {
-    name: "CELO Alfajores",
-    symbol: "CELO",
-    explorer: "https://alfajores.celoscan.io",
-  },
-};
+import useFaucet from "@/hooks/use-faucet";
+import networks from "@/networks.json";
 
 export default function CommunityCard({ community }) {
   const { faucet, isLoading, isError } = useFaucet(community.slug);

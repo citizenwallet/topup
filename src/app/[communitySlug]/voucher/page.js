@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 export default function Page({ params }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -14,10 +15,30 @@ export default function Page({ params }) {
   }, [router, cancelled]);
 
   if (cancelled) {
-    return <p className="text-xl text-center p-8">Payment cancelled</p>;
+    return (
+      <div>
+        <p className="text-xl text-center p-8">Payment cancelled</p>
+        <Button
+          onClick={() => router.replace(`/${params.communitySlug}`)}
+          className="block mx-auto"
+        >
+          Go back
+        </Button>
+      </div>
+    );
   }
   if (error) {
-    return <p className="text-xl text-center p-8 text-red-800">{error}</p>;
+    return (
+      <div>
+        <p className="text-xl text-center p-8 text-red-800">{error}</p>
+        <Button
+          onClick={() => router.replace(`/${params.communitySlug}`)}
+          className="block mx-auto"
+        >
+          Go back
+        </Button>
+      </div>
+    );
   }
 
   return <p>Redirecting...</p>;

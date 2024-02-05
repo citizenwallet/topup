@@ -46,12 +46,31 @@
   "zinnetest": {
     "packages": [
       {
+        "hidden": true,
         "name": "1 ZINNE",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
         "amount": 1,
-        "unit": "ZINNE"
+        "unit": "ZINNE",
+        "stripe": {
+          "prices": {
+            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
+          }
+        }
+      },
+      {
+        "name": "5 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 5,
+        "unit": "ZINNE",
+        "stripe": {
+          "prices": {
+            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
+          }
+        }
       },
       {
         "name": "10 ZINNE",
@@ -67,7 +86,13 @@
         "fees_in_cents": 100,
         "currency": "EUR",
         "amount": 20,
-        "unit": "ZINNE"
+        "unit": "ZINNE",
+        "stripe": {
+          "prices": {
+            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
+            "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
+          }
+        }
       },
       {
         "name": "50 ZINNE",
@@ -75,7 +100,25 @@
         "fees_in_cents": 100,
         "currency": "EUR",
         "amount": 50,
-        "unit": "ZINNE"
+        "unit": "ZINNE",
+        "stripe": {
+          "prices": {
+            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
+          }
+        }
+      },
+      {
+        "name": "1000 ZINNE",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 1000,
+        "unit": "ZINNE",
+        "stripe": {
+          "prices": {
+            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
+          }
+        }
       }
     ],
     "stripe": {

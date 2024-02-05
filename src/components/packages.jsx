@@ -15,37 +15,59 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import useFaucet from "@/hooks/use-faucet";
+function hasFees(pluginConfig, pkg) {
+  if (pkg.stripe) {
+    if (pkg.stripe.prices.fees) {
+      return true;
+    }
+  } else if (pluginConfig.stripe && pluginConfig.stripe.prices.fees) {
+    return true;
+  }
+  return false;
+}
 
-export function Packages({ communitySlug, packages }) {
+export function Packages({ communitySlug, pluginConfig }) {
+  const { faucet, isLoading, isError } = useFaucet(communitySlug);
   const [formattedPackages, setFormattedPackages] = useState([]);
   const [isItemLoading, setIsItemLoading] = useState("");
   const router = useRouter();
+  const faucetBalance = faucet && parseInt(faucet.balance);
   useEffect(() => {
-    const newPackages = packages.map((pkg) => {
-      pkg.key = `${pkg.amount}-${pkg.buyUrl}`;
-      if (pkg.currency) {
-        pkg.formattedAmount = formatCurrency(
-          (pkg.unitprice_in_cents * pkg.amount) / 100,
-          pkg.currency,
-          navigator.language
-        );
-        pkg.fees = formatCurrency(
-          pkg.fees_in_cents / 100,
-          pkg.currency,
-          navigator.language
-        );
-      }
-      pkg.buyUrl = `/${communitySlug}/topup/${pkg.amount}`;
-      return pkg;
-    });
+    const newPackages = pluginConfig.packages
+      .filter((pkg) => !pkg.hidden)
+      .map((pkg) => {
+        pkg.key = `${pkg.amount}-${pkg.buyUrl}`;
+        if (pkg.currency) {
+          pkg.formattedAmount = formatCurrency(
+            (pkg.unitprice_in_cents * pkg.amount) / 100,
+            pkg.currency,
+            navigator.language
+          );
+          if (hasFees(pluginConfig, pkg)) {
+            pkg.fees = formatCurrency(
+              pkg.fees_in_cents / 100,
+              pkg.currency,
+              navigator.language
+            );
+          }
+        }
+        pkg.buyUrl = `/${communitySlug}/topup/${pkg.amount}`;
+        return pkg;
+      });
     setFormattedPackages(newPackages);
-  }, [packages, communitySlug]);
+  }, [pluginConfig, communitySlug]);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
       style: "currency",
       currency,
     }).format(amount);
+  }
+
+  function isSoldOut(pkg) {
+    if (isLoading) return false;
+    return pkg.amount > faucetBalance;
   }
 
   const handleClick = (href, itemId) => {
@@ -79,9 +101,9 @@ export function Packages({ communitySlug, packages }) {
             </CardContent>
           )}
           <CardFooter>
-            {pkg.key != isItemLoading ? (
+            {pkg.key != isItemLoading && !isSoldOut(pkg) ? (
               <a
-                className=" cursor-pointer border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
+                className="cursor-pointer border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
                 onClick={() => handleClick(pkg.buyUrl, pkg.key)}
               >
                 {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
@@ -91,7 +113,11 @@ export function Packages({ communitySlug, packages }) {
                 className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
                 disabled
               >
-                Processing...
+                {isSoldOut(pkg)
+                  ? "Sold Out"
+                  : pkg.buyUrl.match(/\/topup/)
+                  ? "Top Up"
+                  : "Buy Now"}
               </Button>
             )}
           </CardFooter>

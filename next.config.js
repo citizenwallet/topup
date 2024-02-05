@@ -8,7 +8,7 @@ const nextConfig = {
       loader: "json-loader",
       type: "javascript/auto", // Required by Webpack v4
     });
-
+    config.resolve.fallback = { fs: false };
     return config;
   },
 };

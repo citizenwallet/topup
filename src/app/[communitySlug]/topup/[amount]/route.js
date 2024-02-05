@@ -9,7 +9,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 async function createStripeCheckoutSession(
   client_reference_id,
   line_items,
-  { cancel_url, success_url }
+  { cancel_url, success_url, metadata }
 ) {
   const request = {
     client_reference_id,
@@ -17,6 +17,7 @@ async function createStripeCheckoutSession(
     line_items,
     mode: "payment",
     success_url,
+    metadata,
   };
   console.log(">>> stripe session request", request);
   const session = await stripe.checkout.sessions.create(request);
@@ -35,7 +36,7 @@ export async function GET(request, { params }) {
   const searchParams = request.nextUrl.searchParams;
   const accountAddress = searchParams.get("accountAddress");
   const communitySlug = params.communitySlug;
-  const amount = parseInt(params.amount, 10);
+  const amount = parseInt(params.amount, 10); // amount in units
 
   function error(message) {
     redirect(
@@ -50,7 +51,7 @@ export async function GET(request, { params }) {
     const row = {
       communitySlug,
       processor: "topup",
-      amount: amount * 100, // we use cents
+      amount,
       accountAddress,
       chain: null,
     };
@@ -93,17 +94,26 @@ export async function GET(request, { params }) {
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${communitySlug}/voucher?success=true`
     );
   }
-  const prices = pluginConfig.stripe.prices;
+
+  let prices = pluginConfig.stripe.prices;
+  let selectedPack = pluginConfig.packages.find((pkg) => pkg.amount === amount);
+  if (selectedPack && selectedPack.stripe) {
+    prices = selectedPack.stripe.prices;
+  }
+
   const line_items = [
     {
       price: prices.unit,
       quantity: amount,
     },
-    {
+  ];
+
+  if (prices.fees) {
+    line_items.push({
       price: prices.fees,
       quantity: 1,
-    },
-  ];
+    });
+  }
 
   const session = await createStripeCheckoutSession(
     accountAddress,
@@ -111,6 +121,11 @@ export async function GET(request, { params }) {
     {
       cancel_url: setUrl(redirectUrl, "cancelled"),
       success_url: setUrl(redirectUrl, "success"),
+      metadata: {
+        communitySlug,
+        amount,
+        accountAddress,
+      },
     }
   );
   redirect(session.url);

@@ -1,0 +1,22 @@
+{
+  "137": {
+    "name": "Polygon",
+    "symbol": "MATIC",
+    "explorer": "https://polygonscan.com"
+  },
+  "80001": {
+    "name": "Polygon Mumbai",
+    "symbol": "MATIC",
+    "explorer": "https://mumbai.polygonscan.com"
+  },
+  "42220": {
+    "name": "CELO",
+    "symbol": "CELO",
+    "explorer": "https://celoscan.io"
+  },
+  "44787": {
+    "name": "CELO Alfajores",
+    "symbol": "CELO",
+    "explorer": "https://alfajores.celoscan.io"
+  }
+}

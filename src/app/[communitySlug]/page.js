@@ -1,22 +1,19 @@
 import { Packages } from "@/components/packages";
 import CreateVoucher from "@/components/CreateVoucher";
 import { getPlugin } from "@/lib/lib";
+import Error from "@/components/Error";
 
 export default async function Page({ params, searchParams }) {
   const communitySlug = params.communitySlug;
 
   const accountAddress = searchParams.account;
   const redirectUrl = searchParams.redirectUrl;
+  let errorMessage = searchParams.error;
 
   const pluginConfig = getPlugin(communitySlug, "topup");
 
-  if (!pluginConfig) {
-    return (
-      <div className="p-4">
-        <h1 className="text-xl font-bold my-6">Error</h1>
-        <p>No configuration found for {communitySlug}</p>
-      </div>
-    );
+  if (!errorMessage && !pluginConfig) {
+    errorMessage = `No configuration found for {communitySlug}`;
   }
 
   return (
@@ -24,16 +21,21 @@ export default async function Page({ params, searchParams }) {
       <h1 className="text-2xl font-bold my-6 text-center">
         Choose Your Package
       </h1>
-      <Packages
-        communitySlug={communitySlug}
-        accountAddress={accountAddress}
-        packages={pluginConfig.packages}
-      />
-      <CreateVoucher
-        communitySlug={communitySlug}
-        accountAddress={accountAddress}
-        redirectUrl={redirectUrl}
-      />
+      {errorMessage && <Error message={errorMessage} />}
+      {!errorMessage && (
+        <>
+          <Packages
+            communitySlug={communitySlug}
+            accountAddress={accountAddress}
+            pluginConfig={pluginConfig}
+          />
+          <CreateVoucher
+            communitySlug={communitySlug}
+            accountAddress={accountAddress}
+            redirectUrl={redirectUrl}
+          />
+        </>
+      )}
     </div>
   );
 }

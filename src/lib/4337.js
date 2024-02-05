@@ -157,7 +157,13 @@ const paymasterSignUserOp = async (erc4337, userop) => {
     body: JSON.stringify(body),
   });
 
-  if (resp.status !== 200) throw new Error(resp.statusText);
+  if (resp.status !== 200) {
+    console.log("!!! error calling RPC", rpcUrl, resp.statusText);
+    console.log(
+      "Are you sure the indexer is running and the paymaster is deployed?"
+    );
+    throw new Error(resp.statusText);
+  }
 
   const response = await resp.json();
 
