@@ -6,9 +6,7 @@ import { userOpERC20Transfer } from "@/lib/4337";
 
 function getCommunitySlugFromUrl(url) {
   const urlObject = new URL(url);
-  const path = urlObject.pathname;
-  const pathParts = path.split("/");
-  return pathParts[1];
+  return urlObject.searchParams.get("alias");
 }
 
 export async function POST(request) {
@@ -31,8 +29,6 @@ export async function POST(request) {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
-      // console.log(">>> event data", event.type, event.data.object);
-
       const communitySlug = getCommunitySlugFromUrl(
         event.data.object.success_url
       );
