@@ -4,8 +4,8 @@
       "name": "Gratitude Token",
       "description": "Express your gratitude towards someone by sending them a token.",
       "url": "https://citizenwallet.xyz",
-      "alias": "gt.celo",
-      "logo": "https://gt.celo.citizenwallet.xyz/wallet-config/_images/gt.svg"
+      "alias": "gratitude",
+      "logo": "https://gratitude.citizenwallet.xyz/wallet-config/_images/gt.svg"
     },
     "scan": {
       "url": "https://celoscan.io",
@@ -44,8 +44,8 @@
     "plugins": [
       {
         "name": "Top Up",
-        "icon": "https://gt.celo.citizenwallet.xyz/wallet-config/_images/gt.svg",
-        "url": "https://topup.citizenwallet.xyz/gt.celo"
+        "icon": "https://gratitude.citizenwallet.xyz/wallet-config/_images/gt.svg",
+        "url": "https://topup.citizenwallet.xyz/gratitude"
       }
     ],
     "version": 1

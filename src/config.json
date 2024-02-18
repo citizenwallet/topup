@@ -13,7 +13,7 @@
     },
     {
       "name": "Gratitude",
-      "slug": "gt.celo",
+      "slug": "gratitude",
       "description": "Get 10 tokens of gratitude for free",
       "chainId": 42220
     }
@@ -31,7 +31,7 @@
       }
     ]
   },
-  "gt.celo": {
+  "gratitude": {
     "packages": [
       {
         "name": "10 Tokens of Gratitude",
