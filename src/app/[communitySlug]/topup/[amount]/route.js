@@ -26,9 +26,13 @@ async function createStripeCheckoutSession(
 }
 
 function setUrl(urlString, key) {
-  const urlObject = new URL(urlString);
+  const newProtocol = "https:";
+  const url = urlString.replace(/(^\w+:|^)\/\//, `${newProtocol}//`);
+
+  const urlObject = new URL(url);
   urlObject.searchParams.set(key, true);
   urlObject.search = urlObject.searchParams.toString();
+
   return urlObject.toString();
 }
 
