@@ -27,7 +27,12 @@ function hasFees(pluginConfig, pkg) {
   return false;
 }
 
-export function Packages({ communitySlug, pluginConfig }) {
+export function Packages({
+  communitySlug,
+  pluginConfig,
+  accountAddress,
+  redirectUrl,
+}) {
   const { faucet, isLoading, isError } = useFaucet(communitySlug);
   const [formattedPackages, setFormattedPackages] = useState([]);
   const [isItemLoading, setIsItemLoading] = useState("");
@@ -72,10 +77,11 @@ export function Packages({ communitySlug, pluginConfig }) {
 
   const handleClick = (href, itemId) => {
     setIsItemLoading(itemId);
-    const accountAddress = localStorage.getItem("accountAddress");
     let goto = href;
     if (accountAddress) {
-      goto += `?accountAddress=${accountAddress}`;
+      goto += `?accountAddress=${accountAddress}&redirectUrl=${encodeURIComponent(
+        redirectUrl
+      )}`;
       console.log(">>> redirecting to", goto);
       router.push(goto);
     } else {

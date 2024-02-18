@@ -27,6 +27,7 @@ export default async function Page({ params, searchParams }) {
           <Packages
             communitySlug={communitySlug}
             accountAddress={accountAddress}
+            redirectUrl={redirectUrl}
             pluginConfig={pluginConfig}
           />
           <CreateVoucher

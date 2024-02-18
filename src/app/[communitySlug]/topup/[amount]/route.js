@@ -35,6 +35,7 @@ function setUrl(urlString, key) {
 export async function GET(request, { params }) {
   const searchParams = request.nextUrl.searchParams;
   const accountAddress = searchParams.get("accountAddress");
+  const redirectUrl = searchParams.get("redirectUrl");
   const communitySlug = params.communitySlug;
   const amount = parseInt(params.amount, 10); // amount in units
 
@@ -44,8 +45,7 @@ export async function GET(request, { params }) {
     );
   }
 
-  const requestRedirectUrl = window.localStorage.getItem("redirectUrl");
-  const redirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
+  const internalRedirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
 
   const pluginConfig = getPlugin(params.communitySlug, "topup");
 
@@ -92,8 +92,7 @@ export async function GET(request, { params }) {
       recordTransferEvent(row);
     }
 
-    window.localStorage.removeItem("redirectUrl"); // clean up redirectUrl
-    redirect(requestRedirectUrl ?? `${redirectUrl}?success=true`);
+    redirect(redirectUrl ?? `${internalRedirectUrl}?success=true`);
   }
 
   let prices = pluginConfig.stripe.prices;
@@ -120,8 +119,8 @@ export async function GET(request, { params }) {
     accountAddress,
     line_items,
     {
-      cancel_url: setUrl(requestRedirectUrl ?? redirectUrl, "cancelled"),
-      success_url: setUrl(requestRedirectUrl ?? redirectUrl, "success"),
+      cancel_url: setUrl(redirectUrl ?? internalRedirectUrl, "cancelled"),
+      success_url: setUrl(redirectUrl ?? internalRedirectUrl, "success"),
       metadata: {
         communitySlug,
         amount,
@@ -129,8 +128,6 @@ export async function GET(request, { params }) {
       },
     }
   );
-
-  window.localStorage.removeItem("redirectUrl"); // clean up redirectUrl
 
   redirect(session.url);
 }
