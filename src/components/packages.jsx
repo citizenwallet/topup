@@ -82,10 +82,24 @@ export function Packages({
       goto += `?accountAddress=${accountAddress}&redirectUrl=${encodeURIComponent(
         redirectUrl
       )}`;
-      console.log(">>> redirecting to", goto);
+
       router.push(goto);
     } else {
-      console.error("No account address found");
+      const localAccountAddress = window.localStorage.getItem("accountAddress");
+      const localRedirectUrl = window.localStorage.getItem("redirectUrl");
+      if (localAccountAddress && localRedirectUrl) {
+        goto += `?accountAddress=${localAccountAddress}&redirectUrl=${encodeURIComponent(
+          localRedirectUrl
+        )}`;
+
+        // cleanup
+        window.localStorage.removeItem("accountAddress");
+        window.localStorage.removeItem("redirectUrl");
+
+        router.push(goto);
+      } else {
+        console.error("No account address found");
+      }
     }
     return false;
   };
