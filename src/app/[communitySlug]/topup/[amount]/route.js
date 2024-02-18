@@ -44,7 +44,9 @@ export async function GET(request, { params }) {
     );
   }
 
+  const requestRedirectUrl = window.localStorage.getItem("redirectUrl");
   const redirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
+
   const pluginConfig = getPlugin(params.communitySlug, "topup");
 
   if (!pluginConfig.stripe) {
@@ -90,9 +92,8 @@ export async function GET(request, { params }) {
       recordTransferEvent(row);
     }
 
-    redirect(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${communitySlug}/voucher?success=true`
-    );
+    window.localStorage.removeItem("redirectUrl"); // clean up redirectUrl
+    redirect(requestRedirectUrl ?? `${redirectUrl}?success=true`);
   }
 
   let prices = pluginConfig.stripe.prices;
@@ -119,8 +120,8 @@ export async function GET(request, { params }) {
     accountAddress,
     line_items,
     {
-      cancel_url: setUrl(redirectUrl, "cancelled"),
-      success_url: setUrl(redirectUrl, "success"),
+      cancel_url: setUrl(requestRedirectUrl ?? redirectUrl, "cancelled"),
+      success_url: setUrl(requestRedirectUrl ?? redirectUrl, "success"),
       metadata: {
         communitySlug,
         amount,
@@ -128,5 +129,8 @@ export async function GET(request, { params }) {
       },
     }
   );
+
+  window.localStorage.removeItem("redirectUrl"); // clean up redirectUrl
+
   redirect(session.url);
 }

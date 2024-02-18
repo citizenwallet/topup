@@ -11,6 +11,8 @@ export default function Page({ params }) {
   useEffect(() => {
     if (cancelled) return;
     const redirectUrl = window.localStorage.getItem("redirectUrl");
+    window.localStorage.removeItem("redirectUrl");
+
     router.replace(redirectUrl); // `${redirectUrl}&response=${JSON.stringify(params)}`
   }, [router, cancelled]);
 
