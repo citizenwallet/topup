@@ -20,9 +20,11 @@ export default async function Home() {
       </h1>
       <h2 className="text-xl font-bold mb-4">Choose your community currency</h2>
       <div className="m-4">
-        {config.communities.map((community, i) => (
-          <CommunityCard community={community} key={`community-${i}`} />
-        ))}
+        {config.communities
+          .filter((c) => !c.hidden)
+          .map((community, i) => (
+            <CommunityCard community={community} key={`community-${i}`} />
+          ))}
       </div>
     </main>
   );

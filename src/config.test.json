@@ -16,6 +16,13 @@
       "slug": "gratitude",
       "description": "Get 10 tokens of gratitude for free",
       "chainId": 42220
+    },
+    {
+      "name": "Gratitude",
+      "slug": "gt.celo",
+      "description": "Get 10 tokens of gratitude for free",
+      "chainId": 42220,
+      "hidden": true
     }
   ],
   "selcoupdepouce-test": {
@@ -32,6 +39,18 @@
     ]
   },
   "gratitude": {
+    "packages": [
+      {
+        "name": "10 Tokens of Gratitude",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 10,
+        "unit": "GRATITUDE"
+      }
+    ]
+  },
+  "gt.celo": {
     "packages": [
       {
         "name": "10 Tokens of Gratitude",
