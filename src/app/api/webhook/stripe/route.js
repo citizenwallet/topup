@@ -29,9 +29,10 @@ export async function POST(request) {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
-      const communitySlug = getCommunitySlugFromUrl(
-        event.data.object.success_url
-      );
+      // const communitySlug = getCommunitySlugFromUrl(
+      //   event.data.object.success_url
+      // );
+      const communitySlug = "wallet.pay.brussels"; // HARDCODED FIX IT
       const row = {
         communitySlug,
         processor: "stripe",
