@@ -1,6 +1,11 @@
 {
   "communities": [
     {
+      "name": "Brussels Pay",
+      "slug": "wallet.pay.brussels",
+      "chainId": 100
+    },
+    {
       "name": "Bonne Heure",
       "slug": "selcoupdepouce",
       "chainId": 42220
