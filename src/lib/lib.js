@@ -31,7 +31,9 @@ async function loadClientConfig() {
 }
 export async function loadConfig() {
   if (config) return Promise.resolve(config);
-  const res = await fetch(configUrl);
+  const res = await fetch(
+    `${configUrl}?cacheBuster=${Math.round(new Date().getTime() / 10000)}`
+  );
   config = await res.json();
 
   return config;
