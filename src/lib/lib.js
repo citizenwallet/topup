@@ -25,7 +25,11 @@ export function compress(data) {
 let config;
 async function loadClientConfig() {
   if (config) return Promise.resolve(config);
-  const res = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/config`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/config?cacheBuster=${Math.round(
+      new Date().getTime() / 10000
+    )}`
+  );
   config = await res.json();
   return config;
 }
