@@ -115,7 +115,7 @@
       }
     }
   },
-  "wallet.brussels.pay": {
+  "wallet.pay.brussels": {
     "packages": [
       {
         "hidden": true,
