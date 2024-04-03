@@ -110,7 +110,7 @@
       }
     }
   },
-  "EURb": {
+  "wallet.brussels.pay": {
     "packages": [
       {
         "hidden": true,
