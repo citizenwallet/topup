@@ -14,6 +14,14 @@ if (!process.env.NEXT_PUBLIC_FAUCET_ACCOUNT) {
 
 import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
 
+function getCreator(slug) {
+  if (slug === "wallet.pay.brussels") {
+    return "0xB16bBC7Bc0F01C49138053Ef5CDBcFDe53bD4F5E";
+  } else {
+    return process.env.NEXT_PUBLIC_FAUCET_ACCOUNT;
+  }
+}
+
 const V1_COMMUNITIES = ["zinne"];
 const voucherName = "Top up your account"; // This will appear above the token logo when redeeming the voucher
 
@@ -25,7 +33,8 @@ async function v1Voucher(slug, voucherWallet) {
     }
   );
 
-  const params = `alias=${slug}&creator=${process.env.NEXT_PUBLIC_FAUCET_ACCOUNT}&name=${voucherName}`;
+  const creator = getCreator(slug);
+  const params = `alias=${slug}&creator=${creator}&name=${voucherName}`;
 
   const voucher = `voucher=${compress(encryptedWallet)}&params=${compress(
     params
@@ -36,7 +45,8 @@ async function v1Voucher(slug, voucherWallet) {
 
 function v2Voucher(slug, voucherWallet, account) {
   const { privateKey } = voucherWallet;
-  const params = `alias=${slug}&creator=${process.env.NEXT_PUBLIC_FAUCET_ACCOUNT}&name=${voucherName}&account=${account}`;
+  const creator = getCreator(slug);
+  const params = `alias=${slug}&creator=${creator}&name=${voucherName}&account=${account}`;
   const voucher = `voucher=${compress(`v2-${privateKey}`)}&params=${compress(
     params
   )}&alias=${slug}`;
