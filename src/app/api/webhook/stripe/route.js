@@ -48,6 +48,11 @@ export async function POST(request) {
         throw new Error(`Community not found (${communitySlug})`);
       }
 
+      if (!config.node) {
+        console.error("Config.node missing", config);
+        throw new Error(`Config.node missing for ${communitySlug}`);
+      }
+
       const provider = new ethers.providers.JsonRpcProvider({
         url: config.node.url,
         skipFetchSetup: true,
