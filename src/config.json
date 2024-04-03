@@ -118,7 +118,7 @@
   "wallet.pay.brussels": {
     "packages": [
       {
-        "hidden": true,
+        "hidden": false,
         "name": "1 EURb",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
