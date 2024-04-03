@@ -109,5 +109,53 @@
         "unit": "price_1OTwVWFAhaWeDyow5IV6yjWI"
       }
     }
+  },
+  "EURb": {
+    "packages": [
+      {
+        "hidden": true,
+        "name": "1 EURb",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "EURb",
+        "stripe": {
+          "prices": {
+            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH",
+            "fees": "price_1OXjahFAhaWeDyow5NQXjc4D"
+          }
+        }
+      },
+      {
+        "name": "10 EURb",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 10,
+        "unit": "EURb"
+      },
+      {
+        "name": "20 EURb",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "EURb"
+      },
+      {
+        "name": "50 EURb",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 50,
+        "unit": "EURb"
+      }
+    ],
+    "stripe": {
+      "prices": {
+        "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
+      }
+    }
   }
 }

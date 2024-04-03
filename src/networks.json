@@ -1,4 +1,9 @@
 {
+  "100": {
+    "name": "Gnosis",
+    "symbol": "xDAI",
+    "explorer": "https://gnosisscan.io"
+  },
   "137": {
     "name": "Polygon",
     "symbol": "MATIC",
