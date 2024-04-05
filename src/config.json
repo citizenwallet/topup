@@ -11,12 +11,6 @@
       "chainId": 42220
     },
     {
-      "name": "Zinne",
-      "slug": "zinne",
-      "description": "1 Zinne = 1 Euro",
-      "chainId": 80001
-    },
-    {
       "name": "Gratitude",
       "slug": "gratitude",
       "description": "Get 10 tokens of gratitude for free",
@@ -66,54 +60,6 @@
         "unit": "GRATITUDE"
       }
     ]
-  },
-  "zinne": {
-    "packages": [
-      {
-        "hidden": true,
-        "name": "1 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 1,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OTwVWFAhaWeDyow5IV6yjWI",
-            "fees": "price_1OXjahFAhaWeDyow5NQXjc4D"
-          }
-        }
-      },
-      {
-        "name": "10 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 10,
-        "unit": "ZINNE"
-      },
-      {
-        "name": "20 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 20,
-        "unit": "ZINNE"
-      },
-      {
-        "name": "50 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 50,
-        "unit": "ZINNE"
-      }
-    ],
-    "stripe": {
-      "prices": {
-        "unit": "price_1OTwVWFAhaWeDyow5IV6yjWI"
-      }
-    }
   },
   "wallet.pay.brussels": {
     "packages": [
