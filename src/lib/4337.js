@@ -11,7 +11,7 @@ const accountInterface = new ethers.utils.Interface(accountContractAbi);
 const erc20Token = new ethers.utils.Interface(tokenContractAbi);
 
 const adjustForDecimals = (amount, decimals) => {
-  return amount * 10 ** decimals;
+  return BigInt(amount) * 10n ** BigInt(decimals);
 };
 
 const transferCallData = (tokenAddress, receiver, amount) =>
@@ -48,14 +48,14 @@ const userOpToJson = (userop) => {
 const userOpFromJson = (userop) => {
   const newUserop = {
     sender: userop.sender,
-    nonce: ethers.BigNumber.from(userop.nonce),
+    nonce: BigInt(userop.nonce),
     initCode: ethers.utils.arrayify(userop.initCode),
     callData: ethers.utils.arrayify(userop.callData),
-    callGasLimit: ethers.BigNumber.from(userop.callGasLimit),
-    verificationGasLimit: ethers.BigNumber.from(userop.verificationGasLimit),
-    preVerificationGas: ethers.BigNumber.from(userop.preVerificationGas),
-    maxFeePerGas: ethers.BigNumber.from(userop.maxFeePerGas),
-    maxPriorityFeePerGas: ethers.BigNumber.from(userop.maxPriorityFeePerGas),
+    callGasLimit: BigInt(userop.callGasLimit),
+    verificationGasLimit: BigInt(userop.verificationGasLimit),
+    preVerificationGas: BigInt(userop.preVerificationGas),
+    maxFeePerGas: BigInt(userop.maxFeePerGas),
+    maxPriorityFeePerGas: BigInt(userop.maxPriorityFeePerGas),
     paymasterAndData: ethers.utils.arrayify(userop.paymasterAndData),
     signature: ethers.utils.arrayify(userop.signature),
   };
@@ -79,14 +79,14 @@ const generateUserOp = (
 ) => {
   const userop = {
     sender,
-    nonce: ethers.BigNumber.from("0"),
+    nonce: BigInt("0"),
     initCode: ethers.utils.arrayify("0x"),
     callData: ethers.utils.arrayify("0x"),
-    callGasLimit: ethers.BigNumber.from("0"),
-    verificationGasLimit: ethers.BigNumber.from("1500000"),
-    preVerificationGas: ethers.BigNumber.from("21000"),
-    maxFeePerGas: ethers.BigNumber.from("0"),
-    maxPriorityFeePerGas: ethers.BigNumber.from("1000000000"),
+    callGasLimit: BigInt("0"),
+    verificationGasLimit: BigInt("1500000"),
+    preVerificationGas: BigInt("21000"),
+    maxFeePerGas: BigInt("0"),
+    maxPriorityFeePerGas: BigInt("1000000000"),
     paymasterAndData: ethers.utils.arrayify("0x"),
     signature: ethers.utils.arrayify("0x"),
   };
@@ -95,7 +95,7 @@ const generateUserOp = (
   if (!senderAccountExists) {
     const accountCreationCode = accountFactoryInterface.encodeFunctionData(
       "createAccount",
-      [signerAddress, ethers.BigNumber.from(0)]
+      [signerAddress, BigInt(0)]
     );
 
     userop.initCode = ethers.utils.hexConcat([
