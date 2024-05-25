@@ -90,7 +90,7 @@
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
-        "amount": 20,
+        "amount": 50,
         "unit": "EURb"
       },
       {
@@ -98,7 +98,7 @@
         "unitprice_in_cents": 100,
         "fees_in_cents": 200,
         "currency": "EUR",
-        "amount": 20,
+        "amount": 100,
         "unit": "EURb"
       },
       {
