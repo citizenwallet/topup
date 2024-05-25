@@ -61,6 +61,57 @@
       }
     ]
   },
+  "bread": {
+    "packages": [
+      {
+        "hidden": true,
+        "name": "1 USD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "USD",
+        "amount": 1,
+        "unit": "BREAD",
+      },
+      {
+        "name": "20 BREAD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "EURb"
+      },
+      {
+        "name": "50 BREAD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "EURb"
+      },
+      {
+        "name": "100 BREAD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 200,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "EURb"
+      },
+      {
+        "name": "200 BREAD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 400,
+        "currency": "USD",
+        "amount": 200,
+        "unit": "BREAD"
+      }
+    ],
+    "stripe": {
+      "prices": {
+        "unit": "price_1PJFeRFAhaWeDyowZOX8ddAq",
+        "fees": "price_1PJFfjFAhaWeDyowAFd0y6sC"
+      }
+    }
+  },
   "wallet.pay.brussels": {
     "packages": [
       {
