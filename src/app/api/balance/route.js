@@ -50,8 +50,6 @@ export async function GET(req, res) {
     provider
   );
 
-  const gasPrice = await provider.getGasPrice();
-
   const signer = new ethers.Wallet(process.env.FAUCET_PRIVATE_KEY, provider);
   const address = signer.address;
 
@@ -90,14 +88,14 @@ export async function GET(req, res) {
     account,
     tokenContractAddress,
     tokenSymbol,
-    tokenDecimals: decimals,
+    tokenDecimals: Number(decimals),
     balance: formattedBalance,
     sponsorAddress,
     nativeBalance: ethers.formatEther(nativeBalance),
-    chainId: network.chainId,
+    chainId: Number(network.chainId),
     config,
-    gasPrice: ethers.formatUnits(gasPrice, "gwei"),
   };
 
+  console.log(">>> data", data);
   return Response.json(data);
 }
