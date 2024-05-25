@@ -69,7 +69,7 @@
   "bread": {
     "packages": [
       {
-        "hidden": false,
+        "hidden": true,
         "name": "1 USD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
