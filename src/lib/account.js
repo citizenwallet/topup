@@ -13,10 +13,7 @@ export async function getAccountForWalletAddress(walletAddress, communitySlug) {
   );
   const config = await getConfig(communitySlug);
   const AccountFactoryAddress = config.erc4337.account_factory_address;
-  const provider = new ethers.providers.JsonRpcProvider({
-    url: config.node.url,
-    skipFetchSetup: true,
-  });
+  const provider = new ethers.JsonRpcProvider(config.node.url);
 
   const accountFactory = new ethers.Contract(
     AccountFactoryAddress,

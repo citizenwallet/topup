@@ -43,10 +43,7 @@ export async function GET(req, res) {
 
   // console.log(">>> connecting to", config.node.url);
   // console.log(">>> token contract address", tokenContractAddress);
-  const provider = new ethers.providers.JsonRpcProvider({
-    url: config.node.url,
-    skipFetchSetup: true,
-  });
+  const provider = new ethers.JsonRpcProvider(config.node.url);
 
   const sponsorAddress = await getSponsorAddress(
     config.erc4337.paymaster_address,
@@ -82,10 +79,10 @@ export async function GET(req, res) {
   // console.log(">>> tokenDecimals", parseInt(tokenDecimals, 10));
   // console.log("Account:", account);
   // console.log("Balance:", balance.toString());
-  // console.log("Gas price:", ethers.utils.formatUnits(gasPrice, "gwei"));
+  // console.log("Gas price:", ethers.formatUnits(gasPrice, "gwei"));
   const decimals = parseInt(tokenDecimals, 10);
   const formattedBalance = parseFloat(
-    ethers.utils.formatUnits(balance, tokenDecimals)
+    ethers.formatUnits(balance, tokenDecimals)
   ).toFixed(2);
 
   const data = {
@@ -96,10 +93,10 @@ export async function GET(req, res) {
     tokenDecimals: decimals,
     balance: formattedBalance,
     sponsorAddress,
-    nativeBalance: ethers.utils.formatEther(nativeBalance),
+    nativeBalance: ethers.formatEther(nativeBalance),
     chainId: network.chainId,
     config,
-    gasPrice: ethers.utils.formatUnits(gasPrice, "gwei"),
+    gasPrice: ethers.formatUnits(gasPrice, "gwei"),
   };
 
   return Response.json(data);

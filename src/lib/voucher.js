@@ -59,10 +59,7 @@ export async function createVoucher(communitySlug) {
 
   const communityUrl = `${config.community.alias}.citizenwallet.xyz`;
 
-  const provider = new ethers.providers.JsonRpcProvider({
-    url: config.node.url,
-    skipFetchSetup: true,
-  });
+  const provider = new ethers.JsonRpcProvider(config.node.url);
 
   const voucherWallet = ethers.Wallet.createRandom();
 

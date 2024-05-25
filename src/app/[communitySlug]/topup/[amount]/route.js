@@ -70,10 +70,7 @@ export async function GET(request, { params }) {
         throw new Error(`Community not found (${communitySlug})`);
       }
 
-      const provider = new ethers.providers.JsonRpcProvider({
-        url: config.node.url,
-        skipFetchSetup: true,
-      });
+      const provider = new ethers.JsonRpcProvider(config.node.url);
 
       const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
       const signer = faucetWallet.connect(provider);
