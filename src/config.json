@@ -81,7 +81,7 @@
         "name": "20 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
-        "currency": "EUR",
+        "currency": "USD",
         "amount": 20,
         "unit": "EURb"
       },
@@ -89,7 +89,7 @@
         "name": "50 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
-        "currency": "EUR",
+        "currency": "USD",
         "amount": 50,
         "unit": "EURb"
       },
@@ -97,7 +97,7 @@
         "name": "100 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 200,
-        "currency": "EUR",
+        "currency": "USD",
         "amount": 100,
         "unit": "EURb"
       },
