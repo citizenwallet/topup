@@ -76,7 +76,7 @@ export async function POST(request) {
         config.token.address,
         sender,
         row.accountAddress,
-        row.amount,
+        `${row.amount}`,
         "top up"
       );
 
