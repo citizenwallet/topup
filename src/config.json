@@ -75,7 +75,7 @@
         "fees_in_cents": 100,
         "currency": "USD",
         "amount": 1,
-        "unit": "BREAD",
+        "unit": "BREAD"
       },
       {
         "name": "20 BREAD",
