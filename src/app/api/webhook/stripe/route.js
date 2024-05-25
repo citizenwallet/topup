@@ -71,12 +71,22 @@ export async function POST(request) {
 
       const sender = await accountFactoryContract.getAddress(signer.address, 0);
 
+      const params = [
+        signer,
+        config.token.address,
+        sender,
+        row.accountAddress,
+        `${Math.round(row.amount)}`,
+        "top up",
+      ];
+
+      console.log(">>> sendERC20Token", params);
       const signature = await bundler.sendERC20Token(
         signer,
         config.token.address,
         sender,
         row.accountAddress,
-        `${row.amount}`,
+        `${Math.round(row.amount)}`,
         "top up"
       );
 
