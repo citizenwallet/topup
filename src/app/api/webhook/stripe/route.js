@@ -69,7 +69,10 @@ export async function POST(request) {
         provider
       );
 
-      const sender = await accountFactoryContract.getAddress(signer.address, 0);
+      const sender = await accountFactoryContract.getFunction("getAddress")(
+        signer.address,
+        0
+      );
 
       const params = [
         signer,
