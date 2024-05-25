@@ -32,7 +32,8 @@ export async function POST(request) {
       // const communitySlug = getCommunitySlugFromUrl(
       //   event.data.object.success_url
       // );
-      const communitySlug = "wallet.pay.brussels"; // HARDCODED FIX IT
+      // const communitySlug = "wallet.pay.brussels"; // HARDCODED FIX IT
+      const communitySlug = "bread"; // HARDCODED FIX IT
       const row = {
         communitySlug,
         processor: "stripe",

@@ -6,6 +6,11 @@
       "chainId": 100
     },
     {
+      "name": "BREAD",
+      "slug": "bread",
+      "chainId": 100
+    },
+    {
       "name": "Bonne Heure",
       "slug": "selcoupdepouce",
       "chainId": 42220
