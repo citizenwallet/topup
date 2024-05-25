@@ -56,7 +56,7 @@ export async function POST(request) {
         throw new Error(`Config.node missing for ${communitySlug}`);
       }
 
-      const provider = new ethers.JsonRpcProvider(this.config.node.url);
+      const provider = new ethers.JsonRpcProvider(config.node.url);
 
       const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
       const signer = faucetWallet.connect(provider);
