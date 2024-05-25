@@ -2,7 +2,8 @@ import stripe from "stripe";
 import { recordTransferEvent } from "@/lib/db";
 import { getConfig } from "@/lib/lib";
 import { Wallet, ethers } from "ethers";
-import { userOpERC20Transfer } from "@/lib/4337";
+import { BundlerService, userOpERC20Transfer } from "@/lib/4337";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 
 function getCommunitySlugFromUrl(url) {
   const urlObject = new URL(url);
@@ -55,20 +56,28 @@ export async function POST(request) {
         throw new Error(`Config.node missing for ${communitySlug}`);
       }
 
-      const provider = new ethers.providers.JsonRpcProvider({
-        url: config.node.url,
-        skipFetchSetup: true,
-      });
+      const provider = new ethers.JsonRpcProvider(this.config.node.url);
 
       const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
       const signer = faucetWallet.connect(provider);
 
-      const signature = await userOpERC20Transfer(
-        config,
-        provider,
+      const bundler = new BundlerService(config);
+
+      const accountFactoryContract = new ethers.Contract(
+        config.erc4337.account_factory_address,
+        accountFactoryContractAbi,
+        provider
+      );
+
+      const sender = await accountFactoryContract.getAddress(signer.address, 0);
+
+      const signature = await bundler.sendERC20Token(
         signer,
+        config.token.address,
+        sender,
         row.accountAddress,
-        row.amount
+        row.amount,
+        "top up"
       );
 
       row.signature = signature;
