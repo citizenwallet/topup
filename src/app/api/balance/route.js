@@ -59,7 +59,10 @@ export async function GET(req, res) {
     provider
   );
 
-  const account = await accountFactoryContract.getAddress(address, 0);
+  const account = await accountFactoryContract.getFunction("getAddress")(
+    address,
+    0
+  );
 
   const tokenContract = new ethers.Contract(
     tokenContractAddress,
