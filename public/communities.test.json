@@ -632,7 +632,7 @@
       "name": "Breadchain Community Token TEST",
       "description": "BREAD is a digital community token and solidarity primitive developed by Breadchain Cooperative that generates yield for post-capitalist organizations",
       "url": "https://breadchain.xyz/",
-      "alias": "breadtest",
+      "alias": "bread",
       "logo": "https://bread.citizenwallet.xyz/uploads/logo.svg",
       "theme": {
         "primary": "#d04ec5"

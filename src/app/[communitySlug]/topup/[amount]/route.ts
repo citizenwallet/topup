@@ -1,17 +1,20 @@
 import { getConfig, getPlugin } from "@/lib/lib";
 import { recordTransferEvent } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { userOpERC20Transfer } from "@/lib/4337";
+import { BundlerService } from "@/lib/4337";
 import { Wallet, ethers } from "ethers";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory";
+import { sign } from "crypto";
+import { Stripe } from "stripe";
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function createStripeCheckoutSession(
-  client_reference_id,
-  line_items,
+  client_reference_id: string,
+  line_items: Stripe.Checkout.SessionCreateParams.LineItem[],
   { cancel_url, success_url, metadata }
 ) {
-  const request = {
+  const request: Stripe.Checkout.SessionCreateParams = {
     client_reference_id,
     cancel_url,
     line_items,
@@ -30,7 +33,7 @@ function setUrl(urlString, key) {
   const url = urlString.replace(/(^\w+:|^)\/\//, `${newProtocol}//`);
 
   const urlObject = new URL(url);
-  urlObject.searchParams.set(key, true);
+  urlObject.searchParams.set(key, "true");
   urlObject.search = urlObject.searchParams.toString();
 
   return urlObject.toString();
@@ -53,6 +56,11 @@ export async function GET(request, { params }) {
 
   const pluginConfig = getPlugin(params.communitySlug, "topup");
 
+  const config = await getConfig(communitySlug);
+  if (!config) {
+    throw new Error(`Community not found (${communitySlug})`);
+  }
+
   if (!pluginConfig.stripe) {
     const row = {
       communitySlug,
@@ -60,30 +68,45 @@ export async function GET(request, { params }) {
       amount,
       accountAddress,
       chain: null,
+      signature: null,
     };
 
-    console.log(">>> topup", row);
-
     try {
-      const config = await getConfig(communitySlug);
-      if (!config) {
-        throw new Error(`Community not found (${communitySlug})`);
-      }
+      const bundler = new BundlerService(config);
 
       const provider = new ethers.JsonRpcProvider(config.node.url);
 
       const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
       const signer = faucetWallet.connect(provider);
 
-      const signature = await userOpERC20Transfer(
-        config,
-        provider,
-        signer,
-        accountAddress,
-        amount
+      const accountFactoryContract = new ethers.Contract(
+        config.erc4337.account_factory_address,
+        accountFactoryContractAbi,
+        provider
       );
 
-      row.signature = signature;
+      const sender = await accountFactoryContract.getFunction("getAddress")(
+        signer.address,
+        0
+      );
+
+      // const signature = await userOpERC20Transfer(
+      //   config,
+      //   provider,
+      //   signer,
+      //   accountAddress,
+      //   amount
+      // );
+      const txHash = await bundler.sendERC20Token(
+        signer,
+        config.token.address,
+        sender,
+        row.accountAddress,
+        `${Math.round(row.amount)}`,
+        "top up"
+      );
+
+      row.signature = txHash;
     } catch (e) {
       console.log("!!! topup error", e);
       return error(e.message);
@@ -102,7 +125,7 @@ export async function GET(request, { params }) {
     prices = selectedPack.stripe.prices;
   }
 
-  const line_items = [
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
     {
       price: prices.unit,
       quantity: amount,
@@ -116,17 +139,26 @@ export async function GET(request, { params }) {
     });
   }
 
+  console.log("metadata", {
+    communitySlug,
+    amount,
+    accountAddress,
+  });
+
+  const metadata: Stripe.MetadataParam = {
+    description: `Topping up for ${amount} ${config.token.symbol}`,
+    communitySlug,
+    amount,
+    accountAddress,
+  };
+
   const session = await createStripeCheckoutSession(
     accountAddress,
     line_items,
     {
       cancel_url: setUrl(redirectUrl ?? internalRedirectUrl, "cancelled"),
       success_url: setUrl(redirectUrl ?? internalRedirectUrl, "success"),
-      metadata: {
-        communitySlug,
-        amount,
-        accountAddress,
-      },
+      metadata,
     }
   );
 

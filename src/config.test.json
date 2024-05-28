@@ -13,7 +13,7 @@
     },
     {
       "name": "BREAD Test",
-      "slug": "breadtest",
+      "slug": "bread",
       "description": "1 BREAD = 1 Euro",
       "chainId": 100
     },
@@ -153,7 +153,7 @@
       }
     }
   },
-  "breadtest": {
+  "bread": {
     "packages": [
       {
         "hidden": true,

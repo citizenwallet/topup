@@ -3,7 +3,7 @@ import { JsonRpcProvider, encodeBytes32String, ethers } from "ethers";
 import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 import accountContractAbi from "smartcontracts/build/contracts/account/Account.abi.json";
 import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi.json";
-import profileContractAbi from "smartcontracts/build/contracts/profile/Profile.abi";
+import profileContractAbi from "smartcontracts/build/contracts/profile/Profile.abi.json";
 import tokenEntryPointContractAbi from "smartcontracts/build/contracts/tokenEntryPoint/TokenEntryPoint.abi.json";
 
 const accountFactoryInterface = new ethers.Interface(accountFactoryContractAbi);
@@ -11,7 +11,39 @@ const accountInterface = new ethers.Interface(accountContractAbi);
 const erc20Token = new ethers.Interface(tokenContractAbi);
 const profileInterface = new ethers.Interface(profileContractAbi);
 
-const executeCallData = (contractAddress, calldata) =>
+interface UserOpExtraData {
+  description: string;
+}
+
+export interface UserOp {
+  sender: string;
+  nonce: bigint;
+  initCode: Uint8Array;
+  callData: Uint8Array;
+  callGasLimit: bigint;
+  verificationGasLimit: bigint;
+  preVerificationGas: bigint;
+  maxFeePerGas: bigint;
+  maxPriorityFeePerGas: bigint;
+  paymasterAndData: Uint8Array;
+  signature: Uint8Array;
+}
+
+interface JsonUserOp {
+  sender: string;
+  nonce: string;
+  initCode: string;
+  callData: string;
+  callGasLimit: string;
+  verificationGasLimit: string;
+  preVerificationGas: string;
+  maxFeePerGas: string;
+  maxPriorityFeePerGas: string;
+  paymasterAndData: string;
+  signature: string;
+}
+
+const executeCallData = (contractAddress: string, calldata: string) =>
   ethers.getBytes(
     accountInterface.encodeFunctionData("execute", [
       contractAddress,
@@ -20,7 +52,11 @@ const executeCallData = (contractAddress, calldata) =>
     ])
   );
 
-const transferCallData = (tokenAddress, receiver, amount) =>
+const transferCallData = (
+  tokenAddress: string,
+  receiver: string,
+  amount: bigint
+) =>
   ethers.getBytes(
     accountInterface.encodeFunctionData("execute", [
       tokenAddress,
@@ -30,10 +66,10 @@ const transferCallData = (tokenAddress, receiver, amount) =>
   );
 
 const setProfileCallData = (
-  profileContractAddress,
-  profileAccountAddress,
-  username,
-  ipfsHash
+  profileContractAddress: string,
+  profileAccountAddress: string,
+  username: string,
+  ipfsHash: string
 ) => {
   console.log(
     ">>> setProfileCallData",
@@ -55,7 +91,7 @@ const setProfileCallData = (
   );
 };
 
-const getEmptyUserOp = (sender) => ({
+const getEmptyUserOp = (sender: string): UserOp => ({
   sender,
   nonce: BigInt(0),
   initCode: ethers.getBytes("0x"),
@@ -69,8 +105,8 @@ const getEmptyUserOp = (sender) => ({
   signature: ethers.getBytes("0x"),
 });
 
-const userOpToJson = (userop) => {
-  const newUserop = {
+const userOpToJson = (userop: UserOp): JsonUserOp => {
+  const newUserop: JsonUserOp = {
     sender: userop.sender,
     nonce: ethers.toBeHex(userop.nonce.toString()).replace("0x0", "0x"),
     initCode: ethers.hexlify(userop.initCode),
@@ -97,8 +133,8 @@ const userOpToJson = (userop) => {
   return newUserop;
 };
 
-const userOpFromJson = (userop) => {
-  const newUserop = {
+const userOpFromJson = (userop: JsonUserOp): UserOp => {
+  const newUserop: UserOp = {
     sender: userop.sender,
     nonce: BigInt(userop.nonce),
     initCode: ethers.getBytes(userop.initCode),
@@ -116,10 +152,10 @@ const userOpFromJson = (userop) => {
 };
 
 export class BundlerService {
-  provider;
-  bundlerProvider;
+  private provider: JsonRpcProvider;
+  private bundlerProvider: JsonRpcProvider;
 
-  constructor(config) {
+  constructor(private config: Config) {
     this.config = config;
 
     const rpcUrl = `${this.config.erc4337.rpc_url}/${this.config.erc4337.paymaster_address}`;
@@ -128,19 +164,19 @@ export class BundlerService {
     this.bundlerProvider = new ethers.JsonRpcProvider(rpcUrl);
   }
 
-  async senderAccountExists(sender) {
+  async senderAccountExists(sender: string) {
     const url = `${this.config.indexer.url}/accounts/${sender}/exists`;
 
     const resp = await fetch(url);
     return resp.status === 200;
   }
 
-  generateUserOp(
-    signerAddress,
-    sender,
+  private generateUserOp(
+    signerAddress: string,
+    sender: string,
     senderAccountExists = false,
-    accountFactoryAddress,
-    callData
+    accountFactoryAddress: string,
+    callData: Uint8Array
   ) {
     const userop = getEmptyUserOp(sender);
 
@@ -162,7 +198,11 @@ export class BundlerService {
     return userop;
   }
 
-  async prepareUserOp(owner, sender, callData) {
+  private async prepareUserOp(
+    owner: string,
+    sender: string,
+    callData: Uint8Array
+  ): Promise<UserOp> {
     if (this.config.erc4337 === undefined || this.config.token === undefined) {
       throw new Error("Invalid config object");
     }
@@ -184,7 +224,7 @@ export class BundlerService {
     return userop;
   }
 
-  async paymasterSignUserOp(userop) {
+  private async paymasterSignUserOp(userop: UserOp) {
     const method = "pm_ooSponsorUserOperation";
 
     const params = [
@@ -196,14 +236,17 @@ export class BundlerService {
 
     const response = await this.bundlerProvider.send(method, params);
 
-    if (response && !response.length) {
+    if (!response?.length) {
       throw new Error("Invalid response");
     }
 
     return userOpFromJson(response[0]);
   }
 
-  async signUserOp(signer, userop) {
+  private async signUserOp(
+    signer: ethers.Signer,
+    userop: UserOp
+  ): Promise<Uint8Array> {
     const tokenEntryPointContract = new ethers.Contract(
       this.config.erc4337.entrypoint_address,
       tokenEntryPointContractAbi,
@@ -219,10 +262,10 @@ export class BundlerService {
     return signature;
   }
 
-  async submitUserOp(userop, extraData) {
+  private async submitUserOp(userop: UserOp, extraData?: UserOpExtraData) {
     const method = "eth_sendUserOperation";
 
-    const params = [
+    const params: any[] = [
       userOpToJson(userop),
       this.config.erc4337.entrypoint_address,
     ];
@@ -233,14 +276,20 @@ export class BundlerService {
 
     const response = await this.bundlerProvider.send(method, params);
 
-    if (response && !response.length) {
+    if (!response?.length) {
       throw new Error("Invalid response");
     }
 
     return userop;
   }
 
-  async submit(signer, sender, contractAddress, calldata, description) {
+  async submit(
+    signer: ethers.Signer,
+    sender: string,
+    contractAddress: string,
+    calldata: string,
+    description?: string
+  ): Promise<UserOp> {
     const owner = await signer.getAddress();
 
     const executeCalldata = executeCallData(contractAddress, calldata);
@@ -264,7 +313,14 @@ export class BundlerService {
     return userop;
   }
 
-  async sendERC20Token(signer, tokenAddress, from, to, amount, description) {
+  async sendERC20Token(
+    signer: ethers.Signer,
+    tokenAddress: string,
+    from: string,
+    to: string,
+    amount: string,
+    description?: string
+  ): Promise<UserOp> {
     const formattedAmount = ethers.parseUnits(
       amount,
       this.config.token.decimals
@@ -293,12 +349,12 @@ export class BundlerService {
     return userop;
   }
   async setProfile(
-    signer,
-    signerAccountAddress,
-    profileAccountAddress,
-    username,
-    ipfsHash
-  ) {
+    signer: ethers.Signer,
+    signerAccountAddress: string,
+    profileAccountAddress: string,
+    username: string,
+    ipfsHash: string
+  ): Promise<UserOp> {
     const calldata = setProfileCallData(
       this.config.profile.address,
       profileAccountAddress,
