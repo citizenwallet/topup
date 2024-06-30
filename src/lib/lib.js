@@ -38,12 +38,17 @@ async function loadClientConfig() {
 }
 export async function loadConfig() {
   if (config) return Promise.resolve(config);
-  const res = await fetch(
-    `${configUrl}?cacheBuster=${Math.round(new Date().getTime() / 10000)}`
-  );
-  config = await res.json();
-
-  return config;
+  const url = `${configUrl}?cacheBuster=${Math.round(
+    new Date().getTime() / 10000
+  )}`;
+  try {
+    const res = await fetch(url);
+    config = await res.json();
+    return config;
+  } catch (e) {
+    console.error(">>> lib.js > loadConfig: error", url, e);
+    return [];
+  }
 }
 export async function getClientConfig(communitySlug) {
   const communities = await loadClientConfig();
@@ -52,6 +57,7 @@ export async function getClientConfig(communitySlug) {
 }
 
 export async function getConfig(communitySlug) {
+  console.log(">>> lib.js > getConfig for", communitySlug);
   const communities = await loadConfig();
   if (!communitySlug) return communities;
   return communities.find((c) => c.community.alias === communitySlug);

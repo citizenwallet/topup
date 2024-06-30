@@ -34,8 +34,8 @@ export async function GET(req, res) {
     );
   }
 
-  const config = await getConfig(communitySlug);
   console.log(">>> communitySlug", communitySlug);
+  const config = await getConfig(communitySlug);
   console.log(">>> config", config && config.community);
 
   if (!config) {
