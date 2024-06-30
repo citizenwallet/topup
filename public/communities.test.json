@@ -46,6 +46,14 @@
       "account_factory_address": "0x271e05315787be0E642D07eF19aC57d41E2c450f",
       "paymaster_type": "cw"
     },
+    "plugins": [
+      {
+        "name": "Top Up",
+        "icon": "https://gt.celo.citizenwallet.xyz/wallet-config/_images/gt.svg",
+        "url": "https://preview.topup.citizenspring.xyz/beer.citizenwallet.xyz",
+        "launch_mode": "webview"
+      }
+    ],
     "version": 1
   },
   {

@@ -27,7 +27,7 @@
     "pg-format": "^1.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "smartcontracts": "github:citizenwallet/smartcontracts#v0.0.108",
+    "smartcontracts": "github:citizenwallet/smartcontracts#v0.0.109",
     "stripe": "^14.5.0",
     "swr": "^2.2.4",
     "tailwind-merge": "^2.2.0",

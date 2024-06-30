@@ -3,7 +3,7 @@ import { recordTransferEvent } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { BundlerService } from "@/lib/4337";
 import { Wallet, ethers } from "ethers";
-import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
 import { sign } from "crypto";
 import { Stripe } from "stripe";
 
@@ -71,20 +71,26 @@ export async function GET(request, { params }) {
       signature: null,
     };
 
+    let bundler;
     try {
-      const bundler = new BundlerService(config);
-
+      bundler = new BundlerService(config);
+    } catch (e) {
+      console.log("!!! new BundlerService error", e);
+      return error(e.message);
+    }
+    try {
       const provider = new ethers.JsonRpcProvider(config.node.url);
 
       const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
       const signer = faucetWallet.connect(provider);
-
+      console.log(">>> provider rpc", config.node.url);
+      console.log(">>> provider", provider);
       const accountFactoryContract = new ethers.Contract(
         config.erc4337.account_factory_address,
         accountFactoryContractAbi,
         provider
       );
-
+      console.log(">>> accountFactoryContract", accountFactoryContract);
       const sender = await accountFactoryContract.getFunction("getAddress")(
         signer.address,
         0
@@ -97,16 +103,22 @@ export async function GET(request, { params }) {
       //   accountAddress,
       //   amount
       // );
-      const txHash = await bundler.sendERC20Token(
-        signer,
-        config.token.address,
-        sender,
-        row.accountAddress,
-        `${Math.round(row.amount)}`,
-        "top up"
-      );
 
-      row.signature = txHash;
+      try {
+        const txHash = await bundler.sendERC20Token(
+          signer,
+          config.token.address,
+          sender,
+          row.accountAddress,
+          `${Math.round(row.amount)}`,
+          "top up"
+        );
+
+        row.signature = txHash;
+      } catch (e) {
+        console.log("!!! bundler.sendERC20Token error", e);
+        return error(e.message);
+      }
     } catch (e) {
       console.log("!!! topup error", e);
       return error(e.message);
