@@ -43,10 +43,10 @@ export async function loadConfig() {
   )}`;
   try {
     const res = await fetch(url);
-    const data = await res.text();
     try {
       config = await res.json();
     } catch (e) {
+      const data = await res.text();
       console.error(
         ">>> lib.js > loadConfig: error parsing json",
         url,
