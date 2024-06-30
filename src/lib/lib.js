@@ -4,14 +4,14 @@ import topupProdConfig from "../config.json";
 import topupTestConfig from "../config.test.json";
 
 const topupConfig =
-  process.env.NODE_ENV === "production" ? topupProdConfig : topupTestConfig;
+  process.env.VERCEL_ENV === "production" ? topupProdConfig : topupTestConfig;
 
 const configUrl =
-  process.env.NODE_ENV === "production"
+  process.env.VERCEL_ENV === "production"
     ? "https://config.internal.citizenwallet.xyz/v3/communities.json"
     : `${process.env.NEXT_PUBLIC_WEBSITE_URL}/communities.test.json`;
 
-console.log(">>> env", process.env.NODE_ENV);
+console.log(">>> env", process.env.VERCEL_ENV);
 console.log(">>> configUrl", configUrl);
 
 export function compress(data) {

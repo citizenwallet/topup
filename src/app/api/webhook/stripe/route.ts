@@ -88,7 +88,10 @@ export async function POST(request) {
 
         row.signature = signature;
 
-        if (process.env.POSTGRES_URL && process.env.NODE_ENV === "production") {
+        if (
+          process.env.POSTGRES_URL &&
+          process.env.VERCEL_ENV === "production"
+        ) {
           recordTransferEvent(row);
         }
 
