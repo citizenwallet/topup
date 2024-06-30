@@ -30,7 +30,8 @@ export async function GET(req, res) {
   }
 
   const config = await getConfig(communitySlug);
-  const tokenContractAddress = config.token.address;
+  console.log(">>> communitySlug", communitySlug);
+  console.log(">>> config", config && config.community);
 
   if (!config) {
     return Response.json(
@@ -41,6 +42,7 @@ export async function GET(req, res) {
     );
   }
 
+  const tokenContractAddress = config.token.address;
   // console.log(">>> connecting to", config.node.url);
   // console.log(">>> token contract address", tokenContractAddress);
   const provider = new ethers.JsonRpcProvider(config.node.url);
