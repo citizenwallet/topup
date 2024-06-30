@@ -9,6 +9,11 @@
     "symbol": "MATIC",
     "explorer": "https://polygonscan.com"
   },
+  "8453": {
+    "name": "Base",
+    "symbol": "ETH",
+    "explorer": "https://basescan.org"
+  },
   "80001": {
     "name": "Polygon Mumbai",
     "symbol": "MATIC",
