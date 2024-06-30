@@ -1,11 +1,6 @@
 {
   "communities": [
     {
-      "name": "Bonne Heure Test",
-      "slug": "selcoupdepouce-test",
-      "chainId": 44787
-    },
-    {
       "name": "BEER",
       "slug": "beer.citizenwallet.xyz",
       "chainId": 8453
