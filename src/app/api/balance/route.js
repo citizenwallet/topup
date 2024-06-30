@@ -4,6 +4,11 @@ import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory
 import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
 import { getConfig } from "@/lib/lib";
 
+if (!process.env.FAUCET_PRIVATE_KEY) {
+  console.error("!!! FAUCET_PRIVATE_KEY not set");
+  process.exit(0);
+}
+
 export const dynamic = "force-dynamic";
 
 async function getSponsorAddress(paymasterContractAddress, provider) {
@@ -42,9 +47,17 @@ export async function GET(req, res) {
     );
   }
 
+  if (!config.node.url) {
+    return Response.json(
+      {
+        error: `Node URL not found for community (${communitySlug})`,
+      },
+      { status: 404 }
+    );
+  }
   const tokenContractAddress = config.token.address;
-  // console.log(">>> connecting to", config.node.url);
-  // console.log(">>> token contract address", tokenContractAddress);
+  console.log(">>> connecting to", config.node.url);
+  console.log(">>> token contract address", tokenContractAddress);
   const provider = new ethers.JsonRpcProvider(config.node.url);
 
   const sponsorAddress = await getSponsorAddress(
