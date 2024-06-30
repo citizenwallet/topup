@@ -6,6 +6,11 @@
       "chainId": 100
     },
     {
+      "name": "BEER",
+      "slug": "beer.citizenwallet.xyz",
+      "chainId": 8453
+    },
+    {
       "name": "BREAD",
       "slug": "bread",
       "chainId": 100
@@ -63,6 +68,27 @@
         "currency": "EUR",
         "amount": 10,
         "unit": "GRATITUDE"
+      }
+    ]
+  },
+  "beer.citizenwallet.xyz": {
+    "packages": [
+      {
+        "hidden": true,
+        "name": "1 USD",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "USD",
+        "amount": 1,
+        "unit": "BEER"
+      },
+      {
+        "name": "1 BEER",
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 0,
+        "currency": "USD",
+        "amount": 5,
+        "unit": "BEER"
       }
     ]
   },

@@ -1,6 +1,55 @@
 [
   {
     "community": {
+      "name": "Beer Token",
+      "description": "Summer on chain, beer on your keychain.",
+      "url": "https://beer.citizenwallet.xyz",
+      "alias": "beer.citizenwallet.xyz",
+      "custom_domain": "beer.citizenwallet.xyz",
+      "logo": "https://beer.citizenwallet.xyz/uploads/logo.svg",
+      "theme": {
+        "primary": "#000000"
+      }
+    },
+    "token": {
+      "standard": "erc20",
+      "name": "Beer Token",
+      "address": "0xEEc0F3257369c6bCD2Fd8755CbEf8A95b12Bc4c9",
+      "symbol": "BEER",
+      "decimals": 6
+    },
+    "scan": {
+      "url": "https://basescan.org/",
+      "name": "Base Explorer"
+    },
+    "node": {
+      "url": "https://nd-231-060-478.p2pify.com/1200e5d6ce27d6e7cd61ab0567a9927e",
+      "ws_url": "wss://ws-nd-231-060-478.p2pify.com/1200e5d6ce27d6e7cd61ab0567a9927e",
+      "chain_id": 8453
+    },
+    "ipfs": {
+      "url": "https://ipfs.internal.citizenwallet.xyz"
+    },
+    "profile": {
+      "address": "0x68C76CF6e7e28df3fE5853173514712030Ec9929"
+    },
+    "indexer": {
+      "url": "https://beer.citizenwallet.xyz/indexer",
+      "ipfs_url": "https://beer.citizenwallet.xyz/indexer",
+      "key": "x"
+    },
+    "erc4337": {
+      "rpc_url": "https://beer.citizenwallet.xyz/indexer/rpc",
+      "paymaster_rpc_url": "https://beer.citizenwallet.xyz/indexer/rpc",
+      "entrypoint_address": "0xfBc526F19A8275eb21CF12E3017b91be5a7dF548",
+      "paymaster_address": "0x480489fe4C0F091051395d0EF5d0AFc2eF882405",
+      "account_factory_address": "0x271e05315787be0E642D07eF19aC57d41E2c450f",
+      "paymaster_type": "cw"
+    },
+    "version": 1
+  },
+  {
+    "community": {
       "name": "Gratitude Token",
       "description": "Express your gratitude towards someone by sending them a token.",
       "url": "https://citizenwallet.xyz/gratitude",
