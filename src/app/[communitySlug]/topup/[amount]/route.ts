@@ -3,7 +3,7 @@ import { recordTransferEvent } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { BundlerService } from "@/lib/4337";
 import { Wallet, ethers } from "ethers";
-import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 import { sign } from "crypto";
 import { Stripe } from "stripe";
 

@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 
-import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
-import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
+import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi.json";
 import { getConfig } from "@/lib/lib";
 
 if (!process.env.FAUCET_PRIVATE_KEY) {
