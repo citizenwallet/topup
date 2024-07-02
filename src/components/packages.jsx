@@ -35,7 +35,7 @@ export function Packages({
 }) {
   const { faucet, isLoading, isError } = useFaucet(communitySlug);
   const [formattedPackages, setFormattedPackages] = useState([]);
-  const [isItemLoading, setIsItemLoading] = useState("");
+  const [isItemLoading, setIsItemLoading] = useState(null);
   const router = useRouter();
   const faucetBalance = faucet && parseInt(faucet.balance);
   useEffect(() => {
@@ -70,9 +70,13 @@ export function Packages({
     }).format(amount);
   }
 
-  function isSoldOut(pkg) {
-    if (isLoading) return false;
-    return pkg.amount > faucetBalance;
+  function pkgState(pkg) {
+    if (isLoading) return "loading";
+    return pkg.amount > faucetBalance
+      ? "sold out"
+      : pkg.unitprice_in_cents
+      ? pkg.formattedAmount
+      : "free";
   }
 
   const handleClick = (href, itemId) => {
@@ -95,7 +99,6 @@ export function Packages({
         // cleanup
         window.localStorage.removeItem("accountAddress");
         window.localStorage.removeItem("redirectUrl");
-
         router.push(goto);
       } else {
         console.error("No account address found");
@@ -105,43 +108,28 @@ export function Packages({
   };
 
   return (
-    <main className="flex flex-col items-center p-4">
+    <main className="flex flex-wrap items-center p-4 max-w-96 mx-auto justify-center">
       {formattedPackages.map((pkg) => (
-        <Card className="w-full max-w-md mb-6" key={pkg.key}>
-          <CardHeader>
-            <CardTitle>{pkg.name}</CardTitle>
-            <div className="text-sm text-gray-500">{pkg.description}</div>
-          </CardHeader>
-          {pkg.unitprice_in_cents > 0 && (
-            <CardContent className="flex justify-between items-center">
-              <div className="text-xl font-semibold">{pkg.formattedAmount}</div>
-              {pkg.fees && (
-                <div className="text-sm text-gray-500">+{pkg.fees} (fees)</div>
-              )}
-            </CardContent>
-          )}
-          <CardFooter>
-            {pkg.key != isItemLoading && !isSoldOut(pkg) ? (
-              <a
-                className="cursor-pointer border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
-                onClick={() => handleClick(pkg.buyUrl, pkg.key)}
-              >
-                {pkg.buyUrl.match(/\/topup/) ? "Top Up" : "Buy Now"}
-              </a>
-            ) : (
-              <Button
-                className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
-                disabled
-              >
-                {isSoldOut(pkg)
-                  ? "Sold Out"
-                  : pkg.buyUrl.match(/\/topup/)
-                  ? "Top Up"
-                  : "Buy Now"}
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
+        <a
+          key={pkg.key}
+          className={`relative w-full max-w-36 h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
+            (isLoading && "opacity-35") ||
+            (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
+          } active:contrast-[0.9] my-2 mx-2 ${
+            isItemLoading === pkg.key && "packageButtonLoading"
+          }`}
+          onClick={() =>
+            !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
+          }
+        >
+          <div className="text-purple-primary flex flex-row items-center mx-auto">
+            <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
+            <div className="text-sm">{pkg.unit}</div>
+          </div>
+          <div className="flex justify-center items-center">
+            <div className="text-lg text-grey-350">{pkgState(pkg)}</div>
+          </div>
+        </a>
       ))}
     </main>
   );

@@ -6,6 +6,13 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  --primary-purple: "#9563D3";
+  --grey-500: "#8F8A9D";
+  --grey-350: "#B7ADC4";
+  --grey-50: "#F1EDF2";
+  --income-green: "#41BA47";
+  --label-green: "#E0F2E1";
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,10 +25,58 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: white;
+}
+
+.packageButtonLoading {
+  position: relative;
+  border-radius: 10px;
+  background: #f1edf2;
+  cursor: pointer;
+
+  &:hover {
+    filter: contrast(1.1);
+  }
+
+  &:active {
+    filter: contrast(0.9);
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: -0px;
+    left: -0px;
+    right: -0px;
+    bottom: -0px;
+    border: 2px solid #8f8a9d;
+    transition: all 0.5s;
+    animation: clippath 3s infinite linear;
+    border-radius: 10px;
+  }
+
+  &::after {
+    animation: clippath 3s infinite -1.5s linear;
+  }
+}
+
+@keyframes clippath {
+  0%,
+  100% {
+    clip-path: inset(0 0 98% 0);
+  }
+
+  25% {
+    clip-path: inset(0 98% 0 0);
+  }
+  50% {
+    clip-path: inset(98% 0 0 0);
+  }
+  75% {
+    clip-path: inset(0 0 0 98%);
+  }
+}
+
+.bg::before {
 }
