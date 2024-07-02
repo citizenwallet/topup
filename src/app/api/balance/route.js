@@ -34,9 +34,7 @@ export async function GET(req, res) {
     );
   }
 
-  console.log(">>> communitySlug", communitySlug);
   const config = await getConfig(communitySlug);
-  console.log(">>> config", config && config.community);
 
   if (!config) {
     return Response.json(
@@ -102,18 +100,17 @@ export async function GET(req, res) {
   ).toFixed(2);
 
   const data = {
-    address,
-    account,
+    address, // faucet address (EOA)
+    account, // faucet account address
     tokenContractAddress,
     tokenSymbol,
     tokenDecimals: Number(decimals),
-    balance: formattedBalance,
+    balance: formattedBalance, // faucet account balance
     sponsorAddress,
-    nativeBalance: ethers.formatEther(nativeBalance),
+    nativeBalance: ethers.formatEther(nativeBalance), // sponsor balance
     chainId: Number(network.chainId),
     config,
   };
 
-  console.log(">>> data", data);
   return Response.json(data);
 }

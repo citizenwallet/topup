@@ -14,7 +14,29 @@ import networks from "@/networks.json";
 
 export default function CommunityCard({ community }) {
   const { faucet, isLoading, isError } = useFaucet(community.slug);
-
+  if (isError || (faucet && faucet.error)) {
+    return (
+      <Card className="w-full max-w-md mb-6">
+        <CardHeader>
+          <CardTitle>{community.name}</CardTitle>
+          <div className="text-sm text-gray-500">{community.description}</div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm text-red-500">
+            Error fetching faucet data {faucet.error}
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Link
+            className="border border-gray-300 rounded-md p-3 dark:border-gray-600 block text-center py-2"
+            href={`/${community.slug}`}
+          >
+            Buy Now
+          </Link>
+        </CardFooter>
+      </Card>
+    );
+  }
   return (
     <Card className="w-full max-w-md mb-6">
       <CardHeader>
@@ -49,7 +71,7 @@ export default function CommunityCard({ community }) {
                       {faucet.nativeBalance}
                       {` `}
 
-                      {networks[faucet.chainId].symbol}
+                      {faucet.chainId && networks[faucet.chainId].symbol}
                     </a>
                   </div>
                 </div>

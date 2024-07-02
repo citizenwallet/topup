@@ -13,10 +13,10 @@
     }
   ],
   "beer.citizenwallet.xyz": {
+    "mode": "mint",
     "packages": [
       {
         "hidden": true,
-        "name": "1 USD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "USD",
@@ -24,30 +24,49 @@
         "unit": "BEER"
       },
       {
-        "name": "1 BEER",
         "unitprice_in_cents": 500,
         "fees_in_cents": 0,
         "currency": "USD",
         "amount": 1,
-        "unit": "BEER",
-        "stripe": {
-          "prices": {
-            "unit": "price_1PXSQuFAhaWeDyowkWj2v0PQ",
-            "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
-          }
-        }
+        "unit": "BEER"
       }
-    ]
+    ],
+    "stripe": {
+      "prices": {
+        "unit": "price_1PXSQuFAhaWeDyowkWj2v0PQ"
+      }
+    }
   },
   "gratitude": {
     "packages": [
       {
-        "name": "10 Tokens of Gratitude",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "GT"
+      },
+      {
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
         "amount": 10,
-        "unit": "GRATITUDE"
+        "unit": "GT"
+      },
+      {
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 20,
+        "unit": "GT"
+      },
+      {
+        "name": "50",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 50,
+        "unit": "GT"
       }
     ]
   }

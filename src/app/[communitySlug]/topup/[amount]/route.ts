@@ -1,10 +1,9 @@
 import { getConfig, getPlugin } from "@/lib/lib";
 import { recordTransferEvent } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { BundlerService } from "@/lib/4337";
+import { BundlerService } from "@citizenwallet/sdk/dist/src/services/bundler";
 import { Wallet, ethers } from "ethers";
 import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
-import { sign } from "crypto";
 import { Stripe } from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -78,32 +77,47 @@ export async function GET(request, { params }) {
       console.log("!!! new BundlerService error", e);
       return error(e.message);
     }
-    try {
-      const provider = new ethers.JsonRpcProvider(config.node.url);
+    const provider = new ethers.JsonRpcProvider(config.node.url);
 
-      const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
-      const signer = faucetWallet.connect(provider);
-      console.log(">>> provider rpc", config.node.url);
-      console.log(">>> provider", provider);
-      const accountFactoryContract = new ethers.Contract(
-        config.erc4337.account_factory_address,
-        accountFactoryContractAbi,
-        provider
-      );
-      console.log(">>> accountFactoryContract", accountFactoryContract);
-      const sender = await accountFactoryContract.getFunction("getAddress")(
-        signer.address,
-        0
-      );
+    const faucetWallet = new Wallet(process.env.FAUCET_PRIVATE_KEY);
+    const signer = faucetWallet.connect(provider);
+    const accountFactoryContract = new ethers.Contract(
+      config.erc4337.account_factory_address,
+      accountFactoryContractAbi,
+      provider
+    );
+    console.log(">>> accountFactoryContract", accountFactoryContract);
+    const sender = await accountFactoryContract.getFunction("getAddress")(
+      signer.address,
+      0
+    );
 
-      // const signature = await userOpERC20Transfer(
-      //   config,
-      //   provider,
-      //   signer,
-      //   accountAddress,
-      //   amount
-      // );
+    // const signature = await userOpERC20Transfer(
+    //   config,
+    //   provider,
+    //   signer,
+    //   accountAddress,
+    //   amount
+    // );
 
+    if (pluginConfig.mode === "mint") {
+      try {
+        const txHash = await bundler.mintERC20Token(
+          signer,
+          config.token.address,
+          sender,
+          row.accountAddress,
+          `${Math.round(row.amount)}`,
+          "minting"
+        );
+
+        row.signature = txHash;
+      } catch (e) {
+        console.log("!!! bundler.mintERC20Token error", e);
+        error(e.message || "Error minting tokens");
+        return;
+      }
+    } else {
       try {
         const txHash = await bundler.sendERC20Token(
           signer,
@@ -119,9 +133,6 @@ export async function GET(request, { params }) {
         console.log("!!! bundler.sendERC20Token error", e);
         return error(e.message);
       }
-    } catch (e) {
-      console.log("!!! topup error", e);
-      return error(e.message);
     }
 
     if (process.env.POSTGRES_URL) {
@@ -131,6 +142,7 @@ export async function GET(request, { params }) {
     redirect(redirectUrl ?? `${internalRedirectUrl}?success=true`);
   }
 
+  // Using stripe
   let prices = pluginConfig.stripe.prices;
   let selectedPack = pluginConfig.packages.find((pkg) => pkg.amount === amount);
   if (selectedPack && selectedPack.stripe) {
@@ -164,15 +176,16 @@ export async function GET(request, { params }) {
     accountAddress,
   };
 
-  const session = await createStripeCheckoutSession(
-    accountAddress,
-    line_items,
-    {
+  let session;
+  try {
+    session = await createStripeCheckoutSession(accountAddress, line_items, {
       cancel_url: setUrl(redirectUrl ?? internalRedirectUrl, "cancelled"),
       success_url: setUrl(redirectUrl ?? internalRedirectUrl, "success"),
       metadata,
-    }
-  );
-
+    });
+  } catch (e) {
+    console.log("!!! stripe.createCheckoutSession error", e);
+    error(e.message || "Error creating stripe session");
+  }
   redirect(session.url);
 }
