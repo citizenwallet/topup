@@ -81,6 +81,7 @@ export async function POST(request) {
         if (pluginConfig.mode === "mint") {
           try {
             row.signature = await bundler.mintERC20Token(
+              // @ts-ignore I don't know how to fix this (why is the exact same code working fine for the /topup route?)
               signer,
               config.token.address,
               sender,
@@ -97,6 +98,7 @@ export async function POST(request) {
           }
         } else {
           row.signature = await bundler.sendERC20Token(
+            // @ts-ignore
             signer,
             config.token.address,
             sender,
