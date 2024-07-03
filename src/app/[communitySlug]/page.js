@@ -18,7 +18,7 @@ export default async function Page({ params, searchParams }) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-semibold my-6 text-center text-grey-500">
+      <h1 className="pt-6 text-2xl font-semibold my-6 text-center text-grey-500">
         Top up
       </h1>
       {errorMessage && <Error message={errorMessage} />}
