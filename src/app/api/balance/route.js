@@ -1,8 +1,13 @@
 import { ethers } from "ethers";
 
-import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
-import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi";
+import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
+import tokenContractAbi from "smartcontracts/build/contracts/erc20/ERC20.abi.json";
 import { getConfig } from "@/lib/lib";
+
+if (!process.env.FAUCET_PRIVATE_KEY) {
+  console.error("!!! FAUCET_PRIVATE_KEY not set");
+  process.exit(0);
+}
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +35,6 @@ export async function GET(req, res) {
   }
 
   const config = await getConfig(communitySlug);
-  const tokenContractAddress = config.token.address;
 
   if (!config) {
     return Response.json(
@@ -41,8 +45,17 @@ export async function GET(req, res) {
     );
   }
 
-  // console.log(">>> connecting to", config.node.url);
-  // console.log(">>> token contract address", tokenContractAddress);
+  if (!config.node.url) {
+    return Response.json(
+      {
+        error: `Node URL not found for community (${communitySlug})`,
+      },
+      { status: 404 }
+    );
+  }
+  const tokenContractAddress = config.token.address;
+  console.log(">>> connecting to", config.node.url);
+  console.log(">>> token contract address", tokenContractAddress);
   const provider = new ethers.JsonRpcProvider(config.node.url);
 
   const sponsorAddress = await getSponsorAddress(
@@ -87,18 +100,17 @@ export async function GET(req, res) {
   ).toFixed(2);
 
   const data = {
-    address,
-    account,
+    address, // faucet address (EOA)
+    account, // faucet account address
     tokenContractAddress,
     tokenSymbol,
     tokenDecimals: Number(decimals),
-    balance: formattedBalance,
+    balance: formattedBalance, // faucet account balance
     sponsorAddress,
-    nativeBalance: ethers.formatEther(nativeBalance),
+    nativeBalance: ethers.formatEther(nativeBalance), // sponsor balance
     chainId: Number(network.chainId),
     config,
   };
 
-  console.log(">>> data", data);
   return Response.json(data);
 }

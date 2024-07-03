@@ -1,8 +1,8 @@
 import stripe from "stripe";
 import { recordTransferEvent } from "@/lib/db";
-import { getConfig } from "@/lib/lib";
+import { getConfig, getPlugin } from "@/lib/lib";
 import { Wallet, ethers } from "ethers";
-import { BundlerService } from "@/lib/4337";
+import { BundlerService } from "@citizenwallet/sdk/dist/src/services/bundler";
 import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 
 export async function POST(request) {
@@ -31,6 +31,7 @@ export async function POST(request) {
         if (!config) {
           throw new Error(`Community not found (${communitySlug})`);
         }
+        const pluginConfig = getPlugin(communitySlug, "topup");
 
         let amount = event?.data?.object?.metadata?.amount;
         if (!amount) {
@@ -77,18 +78,43 @@ export async function POST(request) {
           0
         );
 
-        const signature = await bundler.sendERC20Token(
-          signer,
-          config.token.address,
-          sender,
-          row.accountAddress,
-          `${Math.round(row.amount)}`,
-          "top up"
-        );
+        if (pluginConfig.mode === "mint") {
+          try {
+            console.log(
+              `Minting ${row.amount} ${config.token.symbol} tokens for ${row.accountAddress}`
+            );
+            row.signature = await bundler.mintERC20Token(
+              // @ts-ignore I don't know how to fix this (why is the exact same code working fine for the /topup route?)
+              signer,
+              config.token.address,
+              sender,
+              row.accountAddress,
+              `${Math.round(row.amount)}`,
+              "top up"
+            );
+          } catch (e) {
+            console.log("!!! stripe webhook bundler.mintERC20Token error", e);
+            return new Response(
+              `Webhook Error: ${e.message || "Error minting tokens"}`,
+              { status: 400 }
+            );
+          }
+        } else {
+          row.signature = await bundler.sendERC20Token(
+            // @ts-ignore
+            signer,
+            config.token.address,
+            sender,
+            row.accountAddress,
+            `${Math.round(row.amount)}`,
+            "top up"
+          );
+        }
 
-        row.signature = signature;
-
-        if (process.env.POSTGRES_URL && process.env.NODE_ENV === "production") {
+        if (
+          process.env.POSTGRES_URL &&
+          process.env.VERCEL_ENV === "production"
+        ) {
           recordTransferEvent(row);
         }
 

@@ -3,7 +3,7 @@
 import { ethers } from "ethers";
 import { getConfig } from "@/lib/lib";
 
-import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
+import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 
 export async function getAccountForWalletAddress(walletAddress, communitySlug) {
   console.log(

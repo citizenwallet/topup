@@ -1,241 +1,73 @@
 {
   "communities": [
     {
-      "name": "Bonne Heure Test",
-      "slug": "selcoupdepouce-test",
-      "chainId": 44787
-    },
-    {
-      "name": "Zinne Test",
-      "slug": "zinnetest",
-      "description": "1 Zinne = 1 Euro",
-      "chainId": 80001
-    },
-    {
-      "name": "BREAD Test",
-      "slug": "bread",
-      "description": "1 BREAD = 1 Euro",
-      "chainId": 100
+      "name": "BEER",
+      "slug": "beer.citizenwallet.xyz",
+      "chainId": 8453
     },
     {
       "name": "Gratitude",
       "slug": "gratitude",
       "description": "Get 10 tokens of gratitude for free",
       "chainId": 42220
-    },
-    {
-      "name": "Gratitude",
-      "slug": "gt.celo",
-      "description": "Get 10 tokens of gratitude for free",
-      "chainId": 42220,
-      "hidden": true
     }
   ],
-  "selcoupdepouce-test": {
+  "beer.citizenwallet.xyz": {
+    "mode": "mint",
     "packages": [
       {
-        "name": "100 Bonne Heure",
-        "description": "Recevez 100 Bonne Heure (BHR) de bienvenue",
-        "unitprice_in_cents": 0,
+        "hidden": true,
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 100,
+        "currency": "USD",
+        "amount": 1,
+        "unit": "BEER"
+      },
+      {
+        "unitprice_in_cents": 500,
         "fees_in_cents": 0,
-        "currency": "EUR",
-        "amount": 100,
-        "unit": "BHR"
+        "currency": "USD",
+        "amount": 1,
+        "unit": "BEER"
       }
-    ]
+    ],
+    "stripe": {
+      "prices": {
+        "unit": "price_1PXSQuFAhaWeDyowkWj2v0PQ"
+      }
+    }
   },
   "gratitude": {
     "packages": [
       {
-        "name": "10 Tokens of Gratitude",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "GT"
+      },
+      {
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
         "amount": 10,
-        "unit": "GRATITUDE"
-      }
-    ]
-  },
-  "gt.celo": {
-    "packages": [
+        "unit": "GT"
+      },
       {
-        "name": "10 Tokens of Gratitude",
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
-        "amount": 10,
-        "unit": "GRATITUDE"
+        "amount": 20,
+        "unit": "GT"
+      },
+      {
+        "name": "50",
+        "unitprice_in_cents": 0,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 50,
+        "unit": "GT"
       }
     ]
-  },
-  "zinnetest": {
-    "packages": [
-      {
-        "hidden": true,
-        "name": "1 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 1,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "5 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 5,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "10 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 10,
-        "unit": "ZINNE"
-      },
-      {
-        "name": "20 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 20,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
-            "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
-          }
-        }
-      },
-      {
-        "name": "50 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 50,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "1000 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 1000,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      }
-    ],
-    "stripe": {
-      "prices": {
-        "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
-        "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
-      }
-    }
-  },
-  "bread": {
-    "packages": [
-      {
-        "hidden": true,
-        "name": "1 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 1,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "5 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 5,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "10 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 10,
-        "unit": "ZINNE"
-      },
-      {
-        "name": "20 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 20,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
-            "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
-          }
-        }
-      },
-      {
-        "name": "50 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 50,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      },
-      {
-        "name": "1000 ZINNE",
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 100,
-        "currency": "EUR",
-        "amount": 1000,
-        "unit": "ZINNE",
-        "stripe": {
-          "prices": {
-            "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS"
-          }
-        }
-      }
-    ],
-    "stripe": {
-      "prices": {
-        "unit": "price_1OXLpKFAhaWeDyowDdTsQIUS",
-        "fees": "price_1OXV1sFAhaWeDyow6Sj4Es0R"
-      }
-    }
   }
 }

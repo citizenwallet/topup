@@ -1,8 +1,6 @@
 # Top up
 
-Interface to top up your citizen wallet using Stripe.
-
-Work in progress.
+Frontend interface to top up your citizen wallet community token using Stripe.
 
 ## How to run locally
 

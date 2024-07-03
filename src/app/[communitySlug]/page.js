@@ -7,7 +7,10 @@ export default async function Page({ params, searchParams }) {
   const communitySlug = params.communitySlug;
 
   const accountAddress = searchParams.account;
-  const redirectUrl = decodeURIComponent(searchParams.redirectUrl);
+  const redirectUrl = decodeURIComponent(searchParams.redirectUrl).replace(
+    /([^#])\/\?alias=/,
+    `$1/#/?alias=`
+  );
   let errorMessage = searchParams.error;
 
   const pluginConfig = getPlugin(communitySlug, "topup");
@@ -18,8 +21,8 @@ export default async function Page({ params, searchParams }) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold my-6 text-center">
-        Choose Your Package
+      <h1 className="pt-6 text-2xl font-semibold my-6 text-center text-grey-500">
+        Top up
       </h1>
       {errorMessage && <Error message={errorMessage} />}
       {!errorMessage && (

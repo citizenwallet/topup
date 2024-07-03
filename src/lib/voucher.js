@@ -12,7 +12,7 @@ if (!process.env.NEXT_PUBLIC_FAUCET_ACCOUNT) {
   process.exit(0);
 }
 
-import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi";
+import AccountFactoryAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 
 function getCreator(slug) {
   if (slug === "wallet.pay.brussels") {

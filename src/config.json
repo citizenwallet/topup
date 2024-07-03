@@ -32,7 +32,6 @@
   "selcoupdepouce": {
     "packages": [
       {
-        "name": "100 Bonne Heure",
         "description": "Recevez 100 Bonne Heure (BHR) de bienvenue",
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
@@ -45,7 +44,6 @@
   "gratitude": {
     "packages": [
       {
-        "name": "10 Tokens of Gratitude",
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
@@ -57,7 +55,6 @@
   "gt.celo": {
     "packages": [
       {
-        "name": "10 Tokens of Gratitude",
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
@@ -70,7 +67,6 @@
     "packages": [
       {
         "hidden": true,
-        "name": "1 USD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "USD",
@@ -78,7 +74,6 @@
         "unit": "BREAD"
       },
       {
-        "name": "20 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "USD",
@@ -86,7 +81,6 @@
         "unit": "EURb"
       },
       {
-        "name": "50 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "USD",
@@ -94,7 +88,6 @@
         "unit": "EURb"
       },
       {
-        "name": "100 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 200,
         "currency": "USD",
@@ -102,7 +95,6 @@
         "unit": "EURb"
       },
       {
-        "name": "200 BREAD",
         "unitprice_in_cents": 100,
         "fees_in_cents": 400,
         "currency": "USD",
@@ -121,7 +113,6 @@
     "packages": [
       {
         "hidden": true,
-        "name": "1 EURb",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
@@ -135,7 +126,19 @@
         }
       },
       {
-        "name": "10 EURb",
+        "hidden": false,
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "EURb",
+        "stripe": {
+          "prices": {
+            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
+          }
+        }
+      },
+      {
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
@@ -143,7 +146,6 @@
         "unit": "EURb"
       },
       {
-        "name": "20 EURb",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
@@ -151,7 +153,6 @@
         "unit": "EURb"
       },
       {
-        "name": "50 EURb",
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
         "currency": "EUR",
@@ -159,6 +160,7 @@
         "unit": "EURb"
       }
     ],
+    "mode": "mint",
     "stripe": {
       "prices": {
         "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
