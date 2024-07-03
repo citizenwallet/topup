@@ -112,7 +112,7 @@
   "wallet.pay.brussels": {
     "packages": [
       {
-        "hidden": false,
+        "hidden": true,
         "unitprice_in_cents": 100,
         "fees_in_cents": 0,
         "currency": "EUR",
