@@ -112,6 +112,19 @@
   "wallet.pay.brussels": {
     "packages": [
       {
+        "hidden": false,
+        "unitprice_in_cents": 100,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "EURb",
+        "stripe": {
+          "prices": {
+            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
+          }
+        }
+      },
+      {
         "hidden": true,
         "unitprice_in_cents": 100,
         "fees_in_cents": 100,
@@ -122,19 +135,6 @@
           "prices": {
             "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH",
             "fees": "price_1OXjahFAhaWeDyow5NQXjc4D"
-          }
-        }
-      },
-      {
-        "hidden": false,
-        "unitprice_in_cents": 100,
-        "fees_in_cents": 0,
-        "currency": "EUR",
-        "amount": 1,
-        "unit": "EURb",
-        "stripe": {
-          "prices": {
-            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
           }
         }
       },
