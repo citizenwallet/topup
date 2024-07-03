@@ -7,7 +7,10 @@ export default async function Page({ params, searchParams }) {
   const communitySlug = params.communitySlug;
 
   const accountAddress = searchParams.account;
-  const redirectUrl = decodeURIComponent(searchParams.redirectUrl);
+  const redirectUrl = decodeURIComponent(searchParams.redirectUrl).replace(
+    /([^#])\/\?alias=/,
+    `$1/#/?alias=`
+  );
   let errorMessage = searchParams.error;
 
   const pluginConfig = getPlugin(communitySlug, "topup");
