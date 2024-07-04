@@ -139,7 +139,7 @@ export async function GET(request, { params }) {
       recordTransferEvent(row);
     }
 
-    redirect(redirectUrl ?? `${internalRedirectUrl}?success=true`);
+    redirect(redirectUrl ?? setUrl(internalRedirectUrl, "success"));
   }
 
   // Using stripe
