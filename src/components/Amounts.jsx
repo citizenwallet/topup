@@ -26,6 +26,7 @@ export default function Packages({
   redirectUrl,
 }) {
   const { faucet, isLoading, isError } = useFaucet(communitySlug);
+  const [isItemLoading, setIsItemLoading] = useState(null);
   const router = useRouter();
   const faucetBalance = faucet && parseInt(faucet.balance);
 

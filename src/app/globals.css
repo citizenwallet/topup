@@ -25,7 +25,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: white;
+  background: rgb(var(--background-end-rgb));
 }
 
 .packageButtonLoading {
