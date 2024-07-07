@@ -44,6 +44,7 @@ export default async function Page({ params, searchParams }) {
           {amounts && (
             <Amounts
               amounts={amounts}
+              title={title}
               communitySlug={communitySlug}
               accountAddress={accountAddress}
               redirectUrl={redirectUrl}

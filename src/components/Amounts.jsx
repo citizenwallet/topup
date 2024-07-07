@@ -21,6 +21,7 @@ function hasFees(pluginConfig, pkg) {
 
 export default function Packages({
   communitySlug,
+  title,
   accountAddress,
   amounts,
   redirectUrl,
@@ -44,16 +45,16 @@ export default function Packages({
       ? "sold out"
       : pkg.unitprice_in_cents
       ? pkg.formattedAmount
-      : "free";
+      : "";
   }
 
   const handleClick = (href, itemId) => {
     setIsItemLoading(itemId);
     let goto = href;
     if (accountAddress) {
-      goto += `?accountAddress=${accountAddress}&redirectUrl=${encodeURIComponent(
-        redirectUrl
-      )}`;
+      goto += `?accountAddress=${accountAddress}&title=${encodeURIComponent(
+        title
+      )}&redirectUrl=${encodeURIComponent(redirectUrl)}`;
 
       router.push(goto);
     } else {

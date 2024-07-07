@@ -40,6 +40,7 @@ function setUrl(urlString, key) {
 
 export async function GET(request, { params }) {
   const searchParams = request.nextUrl.searchParams;
+  const title = searchParams.get("title");
   const accountAddress = searchParams.get("accountAddress");
   const redirectUrl = searchParams.get("redirectUrl");
   const communitySlug = params.communitySlug;
@@ -170,7 +171,7 @@ export async function GET(request, { params }) {
   });
 
   const metadata: Stripe.MetadataParam = {
-    description: `Topping up for ${amount} ${config.token.symbol}`,
+    description: title || `Topping up for ${amount} ${config.token.symbol}`,
     communitySlug,
     amount,
     accountAddress,
