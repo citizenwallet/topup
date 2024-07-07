@@ -27,6 +27,7 @@ export default function Packages({
 }) {
   const { faucet, isLoading, isError } = useFaucet(communitySlug);
   const [isItemLoading, setIsItemLoading] = useState(null);
+  const [formattedPackages, setFormattedPackages] = useState([]);
   const router = useRouter();
   const faucetBalance = faucet && parseInt(faucet.balance);
 
@@ -74,26 +75,29 @@ export default function Packages({
     return false;
   };
 
-  const formattedPackages = [];
-  amounts.split(",").forEach((amount) => {
-    const value = parseInt(amount);
-    if (value > 0) {
-      formattedPackages.push({
-        key: amount,
-        amount: value,
-        unit: "EUR",
-        formattedAmount: formatCurrency(value, "EUR", navigator.language),
-        buyUrl: `/${communitySlug}/topup/${value}`,
-      });
-    }
-  });
+  useEffect(() => {
+    const formattedPackages = [];
+    amounts.split(",").forEach((amount) => {
+      const value = parseInt(amount);
+      if (value > 0) {
+        formattedPackages.push({
+          key: amount,
+          amount: value,
+          unit: "EUR",
+          formattedAmount: formatCurrency(value, "EUR", navigator.language),
+          buyUrl: `/${communitySlug}/topup/${value}`,
+        });
+      }
+    });
+    setFormattedPackages(formattedPackages);
+  }, [amounts, communitySlug, setFormattedPackages]);
 
   return (
-    <main className="flex flex-wrap items-center p-4 max-w-96 mx-auto justify-center">
+    <main className="flex flex-col items-center p-4 max-w-96 mx-auto justify-center">
       {formattedPackages.map((pkg) => (
         <a
           key={pkg.key}
-          className={`relative w-full max-w-36 h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
+          className={`relative w-full max-w-md h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
             (isLoading && "opacity-35") ||
             (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
           } active:contrast-[0.9] my-2 mx-2 ${
