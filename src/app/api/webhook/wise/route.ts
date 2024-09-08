@@ -55,6 +55,11 @@ interface WiseWebhookPayload {
   sent_at: string;
 }
 
+interface AccountSlugData {
+  account: string;
+  community: string;
+}
+
 const validateWebhookPayload = (payload: WiseWebhookPayload) => {
   // make sure schema_version is 2.2
   if (payload.schema_version !== "2.2") {
@@ -81,7 +86,7 @@ const isTopUpRequest = (payload: WiseWebhookPayload) => {
     payload.data.transaction_type === "credit" &&
     payload.data.resource.type === "balance-account" &&
     !!payload.data.transfer_reference &&
-    ethers.isAddress(payload.data.transfer_reference.trim()) &&
+    payload.data.transfer_reference.trim().startsWith("CW") &&
     !!payload.data.amount &&
     payload.data.amount > 0
   );
@@ -89,10 +94,10 @@ const isTopUpRequest = (payload: WiseWebhookPayload) => {
 
 const parseWebhookPayload = (
   payload: WiseWebhookPayload
-): { amount: number; account: string } => {
+): { amount: number; accountSlug: string } => {
   const amount = payload.data.amount;
-  const account = ethers.getAddress(payload.data.transfer_reference.trim());
-  return { amount, account };
+  const accountSlug = payload.data.transfer_reference.trim();
+  return { amount, accountSlug };
 };
 
 export async function POST(request: Request) {
@@ -140,13 +145,18 @@ export async function POST(request: Request) {
     }
 
     // parse the webhook payload
-    const { amount, account } = parseWebhookPayload(body);
+    const { amount, accountSlug } = parseWebhookPayload(body);
 
     // get the community config
-    const communitySlug = await kv.get(`account_community_slug_${account}`);
-    if (!communitySlug) {
-      throw new Error(`Community (${communitySlug}) not found for ${account}`);
+    const rawAccountSlugData = await kv.get<string>(
+      `account_slug_${accountSlug}`
+    );
+    if (!rawAccountSlugData) {
+      throw new Error(`Account slug data not found for ${accountSlug}`);
     }
+
+    const accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
+    const { account, community: communitySlug } = accountSlugData;
 
     const config = await getConfig(communitySlug);
     if (!config) {
