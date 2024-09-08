@@ -109,6 +109,8 @@ export async function POST(request: Request) {
 
     const webhookBody = await request.text();
 
+    console.log("webhookBody", webhookBody);
+
     const isVerified = crypto.verify(
       "RSA-SHA256",
       Buffer.from(webhookBody),
@@ -127,11 +129,11 @@ export async function POST(request: Request) {
 
     const body = JSON.parse(webhookBody) as WiseWebhookPayload;
 
+    console.log("body", body);
+
     if (body.event_type !== "balances#update") {
       return new Response("ok", { status: 200 });
     }
-
-    console.log("!!! body", body);
 
     // validate the webhook payload
     const isValid = validateWebhookPayload(body);
