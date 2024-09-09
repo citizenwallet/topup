@@ -29,7 +29,7 @@ export function generateUniqueId(ethAddress: string, arbitraryString: string) {
   const base62Id = base62Encode(truncatedBuffer);
 
   // Return the first 35 characters (or full string if shorter)
-  return `CW${base62Id.slice(0, 35)}`;
+  return `CW${base62Id.slice(0, 33)}`;
 }
 
 // Example usage
