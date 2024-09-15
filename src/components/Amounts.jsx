@@ -4,7 +4,7 @@
  * @see https://v0.dev/t/pYvLECH4ojt
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/navigation";
 import useFaucet from "@/hooks/use-faucet";
@@ -34,6 +34,7 @@ export default function Packages({
 
   const [customAmount, setCustomAmount] = useState("");
   const [showCustom, setShowCustom] = useState(false);
+  const inputRef = useRef(null);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
@@ -102,6 +103,12 @@ export default function Packages({
   };
 
   useEffect(() => {
+    if (showCustom && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showCustom]);
+
+  useEffect(() => {
     const formattedPackages = [];
     amounts.split(",").forEach((amount) => {
       if (amount.trim().toLowerCase() === "custom") {
@@ -130,11 +137,12 @@ export default function Packages({
     <main className="flex flex-col items-center p-4 max-w-96 mx-auto justify-center">
       {showCustom && (
         <form onSubmit={handleCustomSubmit} className="w-full mb-4">
-          <div className="relative">
+          <div className="relative mb-2">
             <input
-              type="number"
+              ref={inputRef}
+              type="text"
               inputMode="decimal"
-              step="0.01"
+              pattern="[0-9]*"
               value={customAmount}
               onChange={handleCustomChange}
               placeholder="0.00"
@@ -146,7 +154,10 @@ export default function Packages({
               </span>
             )}
           </div>
-          <button type="submit" className="sr-only">
+          <button
+            type="submit"
+            className="w-full bg-purple-primary text-white py-2 rounded-xl font-bold"
+          >
             Submit
           </button>
         </form>
