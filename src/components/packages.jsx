@@ -130,7 +130,7 @@ export function Packages({
           }
         >
           <div className="text-purple-primary flex flex-row items-center mx-auto">
-            <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
+            <h2 className="font-bold text-2xl mr-1">{pkg.amount / 100}</h2>
             <div className="text-sm">{pkg.unit}</div>
           </div>
           <div className="flex justify-center items-center">

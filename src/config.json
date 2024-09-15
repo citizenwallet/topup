@@ -158,6 +158,13 @@
         "currency": "EUR",
         "amount": 5000,
         "unit": "EURb"
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 10000,
+        "unit": "EURb"
       }
     ],
     "mode": "mint",
