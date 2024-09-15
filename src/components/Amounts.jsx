@@ -32,6 +32,8 @@ export default function Packages({
   const router = useRouter();
   const faucetBalance = faucet && parseInt(faucet.balance);
 
+  const [customAmount, setCustomAmount] = useState("");
+
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
       style: "currency",
@@ -76,14 +78,32 @@ export default function Packages({
     return false;
   };
 
+  const handleCustomSubmit = (e) => {
+    e.preventDefault();
+    const value = parseFloat(customAmount);
+    if (value > 0) {
+      handleClick(`/${communitySlug}/topup/${parseInt(value * 100)}`, "custom");
+    }
+  };
+
+  const handleCustomChange = (e) => {
+    const value = e.target.value;
+    if (
+      value === "" ||
+      (/^\d*\.?\d{0,2}$/.test(value) && !isNaN(parseFloat(value)))
+    ) {
+      setCustomAmount(value);
+    }
+  };
+
   useEffect(() => {
     const formattedPackages = [];
     amounts.split(",").forEach((amount) => {
-      const value = parseInt(amount);
+      const value = parseInt(amount * 100);
       if (value > 0) {
         formattedPackages.push({
           key: amount,
-          amount: value,
+          amount: parseFloat(amount).toFixed(2),
           unit: "EUR",
           formattedAmount: formatCurrency(value, "EUR", navigator.language),
           buyUrl: `/${communitySlug}/topup/${value}`,
@@ -95,28 +115,51 @@ export default function Packages({
 
   return (
     <main className="flex flex-col items-center p-4 max-w-96 mx-auto justify-center">
-      {formattedPackages.map((pkg) => (
-        <a
-          key={pkg.key}
-          className={`relative w-full max-w-md h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
-            (isLoading && "opacity-35") ||
-            (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
-          } active:contrast-[0.9] my-2 mx-2 ${
-            isItemLoading === pkg.key && "packageButtonLoading"
-          }`}
-          onClick={() =>
-            !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
-          }
-        >
-          <div className="text-purple-primary flex flex-row items-center mx-auto">
-            <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
-            <div className="text-sm">{pkg.unit}</div>
-          </div>
-          <div className="flex justify-center items-center">
-            <div className="text-lg text-grey-350">{pkgState(pkg)}</div>
-          </div>
-        </a>
-      ))}
+      <form onSubmit={handleCustomSubmit} className="w-full mb-4">
+        <div className="relative">
+          <input
+            type="number"
+            inputMode="decimal"
+            step="0.10"
+            value={customAmount}
+            onChange={handleCustomChange}
+            placeholder="0.00"
+            className="w-full p-2 text-3xl font-bold !text-purple-primary border rounded-xl text-center"
+          />
+          {customAmount && (
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg text-purple-primary">
+              EUR
+            </span>
+          )}
+        </div>
+        <button type="submit" className="sr-only">
+          Submit
+        </button>
+      </form>
+      <div className="flex flex-wrap justify-between w-full">
+        {formattedPackages.map((pkg) => (
+          <a
+            key={pkg.key}
+            className={`relative w-[48%] h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
+              (isLoading && "opacity-35") ||
+              (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
+            } active:contrast-[0.9] my-2 ${
+              isItemLoading === pkg.key && "packageButtonLoading"
+            }`}
+            onClick={() =>
+              !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
+            }
+          >
+            <div className="text-purple-primary flex flex-row items-center mx-auto">
+              <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
+              <div className="text-sm">{pkg.unit}</div>
+            </div>
+            <div className="flex justify-center items-center">
+              <div className="text-lg text-grey-350">{pkgState(pkg)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
     </main>
   );
 }

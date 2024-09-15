@@ -24,16 +24,16 @@
         "unit": "BEER"
       },
       {
-        "unitprice_in_cents": 500,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 0,
-        "currency": "USD",
-        "amount": 1,
+        "currency": "EUR",
+        "amount": 100,
         "unit": "BEER"
       }
     ],
     "stripe": {
       "prices": {
-        "unit": "price_1PXSQuFAhaWeDyowkWj2v0PQ"
+        "unit": "price_1PzL3vFAhaWeDyowEGsQwxsD"
       }
     }
   },
