@@ -142,7 +142,6 @@ export default function Packages({
               ref={inputRef}
               type="text"
               inputMode="decimal"
-              pattern="[0-9]*"
               value={customAmount}
               onChange={handleCustomChange}
               placeholder="0.00"
