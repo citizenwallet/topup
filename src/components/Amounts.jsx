@@ -33,6 +33,7 @@ export default function Packages({
   const faucetBalance = faucet && parseInt(faucet.balance);
 
   const [customAmount, setCustomAmount] = useState("");
+  const [showCustom, setShowCustom] = useState(false);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
@@ -82,7 +83,11 @@ export default function Packages({
     e.preventDefault();
     const value = parseFloat(customAmount);
     if (value > 0) {
-      handleClick(`/${communitySlug}/topup/${parseInt(value * 100)}`, "custom");
+      // Use fractional amount (cents) for Stripe
+      handleClick(
+        `/${communitySlug}/topup/${Math.round(value * 100)}`,
+        "custom"
+      );
     }
   };
 
@@ -99,43 +104,53 @@ export default function Packages({
   useEffect(() => {
     const formattedPackages = [];
     amounts.split(",").forEach((amount) => {
-      const value = parseInt(amount * 100);
-      if (value > 0) {
-        formattedPackages.push({
-          key: amount,
-          amount: parseFloat(amount).toFixed(2),
-          unit: "EUR",
-          formattedAmount: formatCurrency(value, "EUR", navigator.language),
-          buyUrl: `/${communitySlug}/topup/${value}`,
-        });
+      if (amount.trim().toLowerCase() === "custom") {
+        setShowCustom(true);
+      } else {
+        const value = parseInt(amount * 100);
+        if (value > 0) {
+          formattedPackages.push({
+            key: amount,
+            amount: parseFloat(amount).toFixed(2),
+            unit: "EUR",
+            formattedAmount: formatCurrency(
+              value / 100,
+              "EUR",
+              navigator.language
+            ),
+            buyUrl: `/${communitySlug}/topup/${value}`,
+          });
+        }
       }
     });
     setFormattedPackages(formattedPackages);
-  }, [amounts, communitySlug, setFormattedPackages]);
+  }, [amounts, communitySlug]);
 
   return (
     <main className="flex flex-col items-center p-4 max-w-96 mx-auto justify-center">
-      <form onSubmit={handleCustomSubmit} className="w-full mb-4">
-        <div className="relative">
-          <input
-            type="number"
-            inputMode="decimal"
-            step="0.10"
-            value={customAmount}
-            onChange={handleCustomChange}
-            placeholder="0.00"
-            className="w-full p-2 text-3xl font-bold !text-purple-primary border rounded-xl text-center"
-          />
-          {customAmount && (
-            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg text-purple-primary">
-              EUR
-            </span>
-          )}
-        </div>
-        <button type="submit" className="sr-only">
-          Submit
-        </button>
-      </form>
+      {showCustom && (
+        <form onSubmit={handleCustomSubmit} className="w-full mb-4">
+          <div className="relative">
+            <input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              value={customAmount}
+              onChange={handleCustomChange}
+              placeholder="0.00"
+              className="w-full p-2 text-3xl font-bold text-black border rounded-xl text-center"
+            />
+            {customAmount && (
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg text-black">
+                EUR
+              </span>
+            )}
+          </div>
+          <button type="submit" className="sr-only">
+            Submit
+          </button>
+        </form>
+      )}
       <div className="flex flex-wrap justify-between w-full">
         {formattedPackages.map((pkg) => (
           <a
