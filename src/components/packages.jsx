@@ -126,7 +126,10 @@ export function Packages({
             isItemLoading === pkg.key && "packageButtonLoading"
           }`}
           onClick={() =>
-            !loading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
+            !loading &&
+            !isItemLoading &&
+            pkg.amount <= faucetBalance &&
+            handleClick(pkg.buyUrl, pkg.key)
           }
         >
           <div className="text-purple-primary flex flex-row items-center mx-auto">

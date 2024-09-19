@@ -171,7 +171,8 @@ export async function GET(request, { params }) {
   });
 
   const metadata: Stripe.MetadataParam = {
-    description: title || `Topping up for ${amount} ${config.token.symbol}`,
+    description:
+      title || `Topping up for ${amount / 100} ${config.token.symbol}`,
     communitySlug,
     amount,
     accountAddress,

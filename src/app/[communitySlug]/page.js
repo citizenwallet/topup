@@ -19,7 +19,7 @@ export default async function Page({ params, searchParams }) {
   const pluginConfig = getPlugin(communitySlug, "topup");
 
   if (!errorMessage && !pluginConfig) {
-    errorMessage = `No configuration found for ${communitySlug}`;
+    errorMessage = `No topup server configuration found for ${communitySlug}`;
   }
 
   console.log(">>> title", title);
