@@ -4,6 +4,7 @@ import { BundlerService } from "@citizenwallet/sdk/dist/src/services/bundler";
 import accountFactoryContractAbi from "smartcontracts/build/contracts/accfactory/AccountFactory.abi.json";
 import { kv } from "@vercel/kv";
 import crypto from "crypto";
+import { fetchWiseTopUps, WiseTransaction } from "./utils";
 
 const sandboxPublicKey = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwpb91cEYuyJNQepZAVfP
@@ -34,71 +35,10 @@ const publicKey = crypto.createPublicKey({
   format: "pem",
 });
 
-interface WiseWebhookPayload {
-  data: {
-    resource: {
-      id: number;
-      profile_id: number;
-      type: "balance-account";
-    };
-    amount: number;
-    balance_id: number;
-    currency: string;
-    transaction_type: "credit" | "debit";
-    occurred_at: string;
-    transfer_reference: string;
-    channel_name: string;
-  };
-  subscription_id: string;
-  event_type: string;
-  schema_version: string;
-  sent_at: string;
-}
-
 interface AccountSlugData {
   account: string;
   community: string;
 }
-
-const validateWebhookPayload = (payload: WiseWebhookPayload) => {
-  // make sure schema_version is 2.2
-  if (payload.schema_version !== "2.2") {
-    return false;
-  }
-
-  //////////////////////////////////////////////////////////////
-  // validate the general structure of the payload
-  if (typeof payload.data !== "object") {
-    return false;
-  }
-
-  if (!payload.data) {
-    return false;
-  }
-  //////////////////////////////////////////////////////////////
-
-  return true;
-};
-
-const isTopUpRequest = (payload: WiseWebhookPayload) => {
-  return (
-    payload.event_type === "balances#update" &&
-    payload.data.transaction_type === "credit" &&
-    payload.data.resource.type === "balance-account" &&
-    !!payload.data.transfer_reference &&
-    payload.data.transfer_reference.trim().startsWith("CW") &&
-    !!payload.data.amount &&
-    payload.data.amount > 0
-  );
-};
-
-const parseWebhookPayload = (
-  payload: WiseWebhookPayload
-): { amount: number; accountSlug: string } => {
-  const amount = payload.data.amount;
-  const accountSlug = payload.data.transfer_reference.trim();
-  return { amount, accountSlug };
-};
 
 export async function POST(request: Request) {
   try {
@@ -127,98 +67,103 @@ export async function POST(request: Request) {
       throw new Error("Webhook payload not verified");
     }
 
-    const body = JSON.parse(webhookBody) as WiseWebhookPayload;
+    const transactions = await fetchWiseTopUps();
 
-    console.log("body", body);
-
-    if (body.event_type !== "balances#update") {
-      return new Response("ok", { status: 200 });
-    }
-
-    // validate the webhook payload
-    const isValid = validateWebhookPayload(body);
-    if (!isValid) {
-      throw new Error("Invalid webhook payload");
-    }
-
-    const isTopUp = isTopUpRequest(body);
-    if (!isTopUp) {
-      return new Response("ok", { status: 200 });
-    }
-
-    // parse the webhook payload
-    const { amount, accountSlug } = parseWebhookPayload(body);
-
-    // get the community config
-    const rawAccountSlugData = await kv.get<string>(
-      `account_slug_${accountSlug}`
-    );
-    if (!rawAccountSlugData) {
-      throw new Error(`Account slug data not found for ${accountSlug}`);
-    }
-
-    const accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
-    const { account, community: communitySlug } = accountSlugData;
-
-    const config = await getConfig(communitySlug);
-    if (!config) {
-      throw new Error(`Config not found for ${communitySlug}`);
-    }
-
-    const pluginConfig = getPlugin(communitySlug, "topup");
-
-    if (!config.node) {
-      console.error("Config.node missing", config);
-      throw new Error(`Config.node missing for ${communitySlug}`);
-    }
-
-    const provider = new ethers.JsonRpcProvider(config.node.url);
-
-    const faucetKey = process.env.FAUCET_PRIVATE_KEY;
-    if (!faucetKey) {
-      throw new Error("Faucet key not found");
-    }
-
-    const faucetWallet = new Wallet(faucetKey);
-    const signer = faucetWallet.connect(provider);
-
-    const bundler = new BundlerService(config);
-
-    const accountFactoryContract = new ethers.Contract(
-      config.erc4337.account_factory_address,
-      accountFactoryContractAbi,
-      provider
-    );
-
-    const sender = await accountFactoryContract.getFunction("getAddress")(
-      signer.address,
-      0
-    );
-
-    if (pluginConfig.mode === "mint") {
-      try {
-        console.log(
-          `Minting ${amount} ${config.token.symbol} tokens for ${account}`
-        );
-        await bundler.mintERC20Token(
-          signer,
-          config.token.address,
-          sender,
-          account,
-          `${Math.round(amount)}`,
-          "top up"
-        );
-      } catch (e) {
-        console.log("!!! wise webhook bundler.mintERC20Token error", e);
-        return new Response(
-          `Webhook Error: ${e.message || "Error minting tokens"}`,
-          { status: 400 }
-        );
-      }
-    } else {
-      console.log(
-        `Sending ${amount} ${config.token.symbol} tokens to ${account}`
+    console.log("!!! transactions", transactions);
+    for (const transaction of transactions) {
+      const processed = await kv.get<boolean>(
+        `wise_processed_${transaction.referenceNumber}`
       );
+
+      if (processed) {
+        continue;
+      }
+
+      await processTransaction(transaction);
+    }
+  } catch (err) {
+    console.log("!!! ERROR", err.message, JSON.stringify(err, null, 2));
+    return new Response(`Webhook Error: ${err.message}`, { status: 500 });
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  return new Response("ok", { status: 200 });
+}
+
+const processTransaction = async (transaction: WiseTransaction) => {
+  const accountSlug = transaction.details.paymentReference;
+  const amount = transaction.amount.value;
+
+  // get the community config
+  const rawAccountSlugData = await kv.get<string>(
+    `account_slug_${accountSlug}`
+  );
+  if (!rawAccountSlugData) {
+    throw new Error(`Account slug data not found for ${accountSlug}`);
+  }
+
+  const accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
+  const { account, community: communitySlug } = accountSlugData;
+
+  const config = await getConfig(communitySlug);
+  if (!config) {
+    throw new Error(`Config not found for ${communitySlug}`);
+  }
+
+  const pluginConfig = getPlugin(communitySlug, "topup");
+
+  if (!config.node) {
+    console.error("Config.node missing", config);
+    throw new Error(`Config.node missing for ${communitySlug}`);
+  }
+
+  const provider = new ethers.JsonRpcProvider(config.node.url);
+
+  const faucetKey = process.env.FAUCET_PRIVATE_KEY;
+  if (!faucetKey) {
+    throw new Error("Faucet key not found");
+  }
+
+  const faucetWallet = new Wallet(faucetKey);
+  const signer = faucetWallet.connect(provider);
+
+  const bundler = new BundlerService(config);
+
+  const accountFactoryContract = new ethers.Contract(
+    config.erc4337.account_factory_address,
+    accountFactoryContractAbi,
+    provider
+  );
+
+  const sender = await accountFactoryContract.getFunction("getAddress")(
+    signer.address,
+    0
+  );
+
+  if (pluginConfig.mode === "mint") {
+    try {
+      console.log(
+        `Minting ${amount} ${config.token.symbol} tokens for ${account}`
+      );
+      await bundler.mintERC20Token(
+        signer,
+        config.token.address,
+        sender,
+        account,
+        `${Math.round(amount)}`,
+        "top up"
+      );
+
+      await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
+    } catch (e) {
+      console.log("!!! wise webhook bundler.mintERC20Token error", e);
+      return;
+    }
+  } else {
+    console.log(
+      `Sending ${amount} ${config.token.symbol} tokens to ${account}`
+    );
+    try {
       await bundler.sendERC20Token(
         signer,
         config.token.address,
@@ -227,12 +172,11 @@ export async function POST(request: Request) {
         `${Math.round(amount)}`,
         "top up"
       );
-    }
-  } catch (err) {
-    console.log("!!! ERROR", err.message, JSON.stringify(err, null, 2));
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
-  }
 
-  // Return a 200 response to acknowledge receipt of the event
-  return new Response("ok", { status: 200 });
-}
+      await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
+    } catch (error) {
+      console.log("!!! wise webhook bundler.sendERC20Token error", error);
+      return;
+    }
+  }
+};
