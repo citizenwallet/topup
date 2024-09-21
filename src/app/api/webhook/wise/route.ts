@@ -140,6 +140,10 @@ const processTransaction = async (transaction: WiseTransaction) => {
     0
   );
 
+  const topUpMessage = `Top up from ${transaction.details.senderName} - ${transaction.details.senderAccount}`;
+
+  console.log("!!! topUpMessage", topUpMessage);
+
   if (pluginConfig.mode === "mint") {
     try {
       console.log(
@@ -151,7 +155,7 @@ const processTransaction = async (transaction: WiseTransaction) => {
         sender,
         account,
         `${Math.round(amount)}`,
-        "top up"
+        topUpMessage
       );
 
       await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
@@ -170,7 +174,7 @@ const processTransaction = async (transaction: WiseTransaction) => {
         sender,
         account,
         `${Math.round(amount)}`,
-        "top up"
+        topUpMessage
       );
 
       await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
