@@ -102,7 +102,16 @@ const processTransaction = async (transaction: WiseTransaction) => {
     throw new Error(`Account slug data not found for ${accountSlug}`);
   }
 
-  const accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
+  console.log("!!! rawAccountSlugData", rawAccountSlugData);
+
+  let accountSlugData: AccountSlugData;
+  try {
+    accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
+  } catch (error) {
+    console.log("!!! error", error);
+    return;
+  }
+
   const { account, community: communitySlug } = accountSlugData;
 
   const config = await getConfig(communitySlug);
