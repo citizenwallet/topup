@@ -37,7 +37,7 @@ export const fetchWiseTopUps = async () => {
   const baseUrl = `${process.env.WISE_API_URL}/v1/profiles/51851934/balance-statements/85390967/statement.json`;
 
   const today = new Date();
-  const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const oneWeekAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const queryParams = new URLSearchParams({
     currency: "EUR",
