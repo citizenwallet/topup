@@ -81,7 +81,9 @@ export async function POST(request) {
         if (pluginConfig.mode === "mint") {
           try {
             console.log(
-              `Minting ${row.amount} ${config.token.symbol} tokens for ${row.accountAddress}`
+              `Minting ${Number(row.amount / 100).toFixed(2)} ${
+                config.token.symbol
+              } tokens for ${row.accountAddress}`
             );
             row.signature = await bundler.mintERC20Token(
               // @ts-ignore I don't know how to fix this (why is the exact same code working fine for the /topup route?)
@@ -89,7 +91,7 @@ export async function POST(request) {
               config.token.address,
               sender,
               row.accountAddress,
-              `${Math.round(row.amount)}`,
+              `${Number(row.amount / 100).toFixed(2)}`,
               "top up"
             );
           } catch (e) {

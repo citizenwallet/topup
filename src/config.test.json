@@ -1,6 +1,11 @@
 {
   "communities": [
     {
+      "name": "Brussels Pay",
+      "slug": "wallet.pay.brussels",
+      "chainId": 100
+    },
+    {
       "name": "BEER",
       "slug": "beer.citizenwallet.xyz",
       "chainId": 8453
@@ -12,6 +17,71 @@
       "chainId": 42220
     }
   ],
+  "wallet.pay.brussels": {
+    "packages": [
+      {
+        "hidden": true,
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 0,
+        "currency": "EUR",
+        "amount": 1,
+        "unit": "EURb",
+        "stripe": {
+          "prices": {
+            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
+          }
+        }
+      },
+      {
+        "hidden": true,
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 100,
+        "unit": "EURb",
+        "stripe": {
+          "prices": {
+            "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH",
+            "fees": "price_1OXjahFAhaWeDyow5NQXjc4D"
+          }
+        }
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 1000,
+        "unit": "EURb"
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 2000,
+        "unit": "EURb"
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 5000,
+        "unit": "EURb"
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 10000,
+        "unit": "EURb"
+      }
+    ],
+    "mode": "mint",
+    "stripe": {
+      "prices": {
+        "unit": "price_1PzL3vFAhaWeDyowEGsQwxsD"
+      }
+    }
+  },
   "beer.citizenwallet.xyz": {
     "mode": "mint",
     "packages": [
@@ -24,16 +94,16 @@
         "unit": "BEER"
       },
       {
-        "unitprice_in_cents": 500,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 0,
-        "currency": "USD",
-        "amount": 1,
+        "currency": "EUR",
+        "amount": 100,
         "unit": "BEER"
       }
     ],
     "stripe": {
       "prices": {
-        "unit": "price_1PXSQuFAhaWeDyowkWj2v0PQ"
+        "unit": "price_1PzL3vFAhaWeDyowEGsQwxsD"
       }
     }
   },

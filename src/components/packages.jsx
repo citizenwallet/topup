@@ -51,13 +51,15 @@ export function Packages({
           );
           if (hasFees(pluginConfig, pkg)) {
             pkg.fees = formatCurrency(
-              pkg.fees_in_cents / 100,
+              pkg.fees_in_cents,
               pkg.currency,
               navigator.language
             );
           }
         }
-        pkg.buyUrl = `/${communitySlug}/topup/${pkg.amount}`;
+        pkg.buyUrl = `/${communitySlug}/topup/${
+          pkg.unitprice_in_cents * pkg.amount
+        }`;
         return pkg;
       });
     setFormattedPackages(newPackages);
@@ -71,6 +73,9 @@ export function Packages({
   }
 
   function pkgState(pkg) {
+    if (pluginConfig.mode === "mint") {
+      return pkg.formattedAmount;
+    }
     if (isLoading) return "loading";
     return pkg.amount > faucetBalance
       ? "sold out"
@@ -107,23 +112,25 @@ export function Packages({
     return false;
   };
 
+  const loading = isLoading && pluginConfig.mode !== "mint";
+
   return (
     <main className="flex flex-wrap items-center p-4 max-w-96 mx-auto justify-center">
       {formattedPackages.map((pkg) => (
         <a
           key={pkg.key}
           className={`relative w-full max-w-36 h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
-            (isLoading && "opacity-35") ||
+            (loading && "opacity-35") ||
             (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
           } active:contrast-[0.9] my-2 mx-2 ${
             isItemLoading === pkg.key && "packageButtonLoading"
           }`}
           onClick={() =>
-            !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
+            !loading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
           }
         >
           <div className="text-purple-primary flex flex-row items-center mx-auto">
-            <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
+            <h2 className="font-bold text-2xl mr-1">{pkg.amount / 100}</h2>
             <div className="text-sm">{pkg.unit}</div>
           </div>
           <div className="flex justify-center items-center">

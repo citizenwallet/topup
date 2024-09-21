@@ -4,7 +4,7 @@
  * @see https://v0.dev/t/pYvLECH4ojt
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/navigation";
 import useFaucet from "@/hooks/use-faucet";
@@ -31,6 +31,10 @@ export default function Packages({
   const [formattedPackages, setFormattedPackages] = useState([]);
   const router = useRouter();
   const faucetBalance = faucet && parseInt(faucet.balance);
+
+  const [customAmount, setCustomAmount] = useState("");
+  const [showCustom, setShowCustom] = useState(false);
+  const inputRef = useRef(null);
 
   function formatCurrency(amount, currency, locale) {
     return new Intl.NumberFormat(locale || "en-US", {
@@ -76,47 +80,111 @@ export default function Packages({
     return false;
   };
 
+  const handleCustomSubmit = (e) => {
+    e.preventDefault();
+    const value = parseFloat(customAmount);
+    if (value > 0) {
+      // Use fractional amount (cents) for Stripe
+      handleClick(
+        `/${communitySlug}/topup/${Math.round(value * 100)}`,
+        "custom"
+      );
+    }
+  };
+
+  const handleCustomChange = (e) => {
+    const value = e.target.value;
+    if (
+      value === "" ||
+      (/^\d*\.?\d{0,2}$/.test(value) && !isNaN(parseFloat(value)))
+    ) {
+      setCustomAmount(value);
+    }
+  };
+
+  useEffect(() => {
+    if (showCustom && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showCustom]);
+
   useEffect(() => {
     const formattedPackages = [];
     amounts.split(",").forEach((amount) => {
-      const value = parseInt(amount);
-      if (value > 0) {
-        formattedPackages.push({
-          key: amount,
-          amount: value,
-          unit: "EUR",
-          formattedAmount: formatCurrency(value, "EUR", navigator.language),
-          buyUrl: `/${communitySlug}/topup/${value}`,
-        });
+      if (amount.trim().toLowerCase() === "custom") {
+        setShowCustom(true);
+      } else {
+        const value = parseInt(amount * 100);
+        if (value > 0) {
+          formattedPackages.push({
+            key: amount,
+            amount: parseFloat(amount).toFixed(2),
+            unit: "EUR",
+            formattedAmount: formatCurrency(
+              value / 100,
+              "EUR",
+              navigator.language
+            ),
+            buyUrl: `/${communitySlug}/topup/${value}`,
+          });
+        }
       }
     });
     setFormattedPackages(formattedPackages);
-  }, [amounts, communitySlug, setFormattedPackages]);
+  }, [amounts, communitySlug]);
 
   return (
     <main className="flex flex-col items-center p-4 max-w-96 mx-auto justify-center">
-      {formattedPackages.map((pkg) => (
-        <a
-          key={pkg.key}
-          className={`relative w-full max-w-md h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
-            (isLoading && "opacity-35") ||
-            (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
-          } active:contrast-[0.9] my-2 mx-2 ${
-            isItemLoading === pkg.key && "packageButtonLoading"
-          }`}
-          onClick={() =>
-            !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
-          }
-        >
-          <div className="text-purple-primary flex flex-row items-center mx-auto">
-            <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
-            <div className="text-sm">{pkg.unit}</div>
+      {showCustom && (
+        <form onSubmit={handleCustomSubmit} className="w-full mb-4">
+          <div className="relative mb-2">
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="decimal"
+              value={customAmount}
+              onChange={handleCustomChange}
+              placeholder="0.00"
+              className="w-full p-2 text-3xl font-bold text-black border rounded-xl text-center"
+            />
+            {customAmount && (
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg text-black">
+                EUR
+              </span>
+            )}
           </div>
-          <div className="flex justify-center items-center">
-            <div className="text-lg text-grey-350">{pkgState(pkg)}</div>
-          </div>
-        </a>
-      ))}
+          <button
+            type="submit"
+            className="w-full bg-purple-primary text-white py-2 rounded-xl font-bold"
+          >
+            Submit
+          </button>
+        </form>
+      )}
+      <div className="flex flex-wrap justify-between w-full">
+        {formattedPackages.map((pkg) => (
+          <a
+            key={pkg.key}
+            className={`relative w-[48%] h-20 bg-grey-25 rounded-xl flex flex-col justify-center cursor-pointer ${
+              (isLoading && "opacity-35") ||
+              (isItemLoading && isItemLoading !== pkg.key && "opacity-35")
+            } active:contrast-[0.9] my-2 ${
+              isItemLoading === pkg.key && "packageButtonLoading"
+            }`}
+            onClick={() =>
+              !isLoading && !isItemLoading && handleClick(pkg.buyUrl, pkg.key)
+            }
+          >
+            <div className="text-purple-primary flex flex-row items-center mx-auto">
+              <h2 className="font-bold text-2xl mr-1">{pkg.amount}</h2>
+              <div className="text-sm">{pkg.unit}</div>
+            </div>
+            <div className="flex justify-center items-center">
+              <div className="text-lg text-grey-350">{pkgState(pkg)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
     </main>
   );
 }

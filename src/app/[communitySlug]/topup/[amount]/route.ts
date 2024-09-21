@@ -54,14 +54,14 @@ export async function GET(request, { params }) {
 
   const internalRedirectUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${params.communitySlug}/voucher`;
 
-  const pluginConfig = getPlugin(params.communitySlug, "topup");
+  const topupConfig = getPlugin(params.communitySlug, "topup");
 
   const config = await getConfig(communitySlug);
   if (!config) {
     throw new Error(`Community not found (${communitySlug})`);
   }
 
-  if (!pluginConfig.stripe) {
+  if (!topupConfig.stripe) {
     const row = {
       communitySlug,
       processor: "topup",
@@ -101,7 +101,7 @@ export async function GET(request, { params }) {
     //   amount
     // );
 
-    if (pluginConfig.mode === "mint") {
+    if (topupConfig.mode === "mint") {
       try {
         const txHash = await bundler.mintERC20Token(
           signer,
@@ -144,8 +144,8 @@ export async function GET(request, { params }) {
   }
 
   // Using stripe
-  let prices = pluginConfig.stripe.prices;
-  let selectedPack = pluginConfig.packages.find((pkg) => pkg.amount === amount);
+  let prices = topupConfig.stripe.prices;
+  let selectedPack = topupConfig.packages.find((pkg) => pkg.amount === amount);
   if (selectedPack && selectedPack.stripe) {
     prices = selectedPack.stripe.prices;
   }
@@ -171,7 +171,8 @@ export async function GET(request, { params }) {
   });
 
   const metadata: Stripe.MetadataParam = {
-    description: title || `Topping up for ${amount} ${config.token.symbol}`,
+    description:
+      title || `Topping up for ${amount / 100} ${config.token.symbol}`,
     communitySlug,
     amount,
     accountAddress,

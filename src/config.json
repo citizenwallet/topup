@@ -67,35 +67,35 @@
     "packages": [
       {
         "hidden": true,
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "USD",
         "amount": 1,
         "unit": "BREAD"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "USD",
         "amount": 20,
         "unit": "EURb"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "USD",
         "amount": 50,
         "unit": "EURb"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 200,
         "currency": "USD",
         "amount": 100,
         "unit": "EURb"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 400,
         "currency": "USD",
         "amount": 200,
@@ -113,7 +113,7 @@
     "packages": [
       {
         "hidden": true,
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 0,
         "currency": "EUR",
         "amount": 1,
@@ -126,10 +126,10 @@
       },
       {
         "hidden": true,
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "EUR",
-        "amount": 1,
+        "amount": 100,
         "unit": "EURb",
         "stripe": {
           "prices": {
@@ -139,31 +139,38 @@
         }
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "EUR",
-        "amount": 10,
+        "amount": 1000,
         "unit": "EURb"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "EUR",
-        "amount": 20,
+        "amount": 2000,
         "unit": "EURb"
       },
       {
-        "unitprice_in_cents": 100,
+        "unitprice_in_cents": 1,
         "fees_in_cents": 100,
         "currency": "EUR",
-        "amount": 50,
+        "amount": 5000,
+        "unit": "EURb"
+      },
+      {
+        "unitprice_in_cents": 1,
+        "fees_in_cents": 100,
+        "currency": "EUR",
+        "amount": 10000,
         "unit": "EURb"
       }
     ],
     "mode": "mint",
     "stripe": {
       "prices": {
-        "unit": "price_1P1Qo4FAhaWeDyowin6YeMGH"
+        "unit": "price_1PzKh0FAhaWeDyowrHsEQ6jj"
       }
     }
   }
