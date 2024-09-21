@@ -62,7 +62,7 @@ export const fetchWiseTopUps = async () => {
     const signature = sign2FA(approval2fa);
 
     headers["x-2fa-approval"] = approval2fa;
-    headers["x-2fa-signature"] = signature;
+    headers["X-Signature"] = signature;
   }
 
   console.log("!!! wise top ups fetching", url);
