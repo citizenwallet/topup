@@ -83,7 +83,7 @@ export const fetchWiseTopUps = async () => {
     (transaction) =>
       transaction.type === "CREDIT" &&
       transaction.amount.zero === false &&
-      transaction.details.paymentReference.startsWith("CW")
+      transaction.details.paymentReference?.startsWith("CW")
   );
 };
 
