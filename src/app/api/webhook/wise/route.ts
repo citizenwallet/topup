@@ -106,7 +106,7 @@ const processTransaction = async (transaction: WiseTransaction) => {
 
   let accountSlugData: AccountSlugData;
   try {
-    accountSlugData = JSON.parse(rawAccountSlugData) as AccountSlugData;
+    accountSlugData = rawAccountSlugData as unknown as AccountSlugData;
   } catch (error) {
     console.log("!!! error", error);
     return;
