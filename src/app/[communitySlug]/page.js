@@ -3,6 +3,12 @@ import Amounts from "@/components/Amounts";
 import CreateVoucher from "@/components/CreateVoucher";
 import { getPlugin } from "@/lib/lib";
 import Error from "@/components/Error";
+import Bank from "@/components/Bank";
+import { kv } from "@vercel/kv";
+import { generateUniqueId } from "@/lib/bank";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { LandmarkIcon } from "lucide-react";
 
 export default async function Page({ params, searchParams }) {
   const communitySlug = params.communitySlug;
@@ -14,6 +20,7 @@ export default async function Page({ params, searchParams }) {
     /([^#])\/\?alias=/,
     `$1/#/?alias=`
   );
+
   let errorMessage = searchParams.error;
 
   const pluginConfig = getPlugin(communitySlug, "topup");
@@ -22,8 +29,14 @@ export default async function Page({ params, searchParams }) {
     errorMessage = `No topup server configuration found for ${communitySlug}`;
   }
 
-  console.log(">>> title", title);
-  console.log(">>> amounts", amounts);
+  const accountSlug = generateUniqueId(accountAddress, communitySlug);
+  const savedAccount = await kv.get(`account_slug_${accountSlug}`);
+  if (!savedAccount) {
+    await kv.set(`account_slug_${accountSlug}`, accountSlug);
+  }
+
+  const iban = process.env.WISE_ACCOUNT;
+  const accountName = process.env.WISE_ACCOUNT_NAME;
 
   return (
     <div className="p-4">
@@ -33,6 +46,9 @@ export default async function Page({ params, searchParams }) {
       {errorMessage && <Error message={errorMessage} />}
       {!errorMessage && (
         <>
+          <h2 className="text-xl font-semibold text-center text-grey-500">
+            Fast
+          </h2>
           {!amounts && (
             <Packages
               communitySlug={communitySlug}
@@ -49,6 +65,29 @@ export default async function Page({ params, searchParams }) {
               accountAddress={accountAddress}
               redirectUrl={redirectUrl}
             />
+          )}
+          {communitySlug === "wallet.pay.brussels" && iban && accountName && (
+            <>
+              <h2 className="text-xl font-semibold my-4 text-center text-grey-500">
+                Not as fast
+              </h2>
+              <div className="flex justify-center">
+                <Link
+                  href={`${communitySlug}/bank${
+                    searchParams
+                      ? `?${new URLSearchParams(searchParams).toString()}`
+                      : ""
+                  }`}
+                >
+                  <Button
+                    variant="default"
+                    className="flex items-center justify-center gap-2 bg-grey-25 py-6 text-purple-primary font-medium text-2xl"
+                  >
+                    Via Bank Transfer <LandmarkIcon className="h-8 w-8" />
+                  </Button>
+                </Link>
+              </div>
+            </>
           )}
           <CreateVoucher
             communitySlug={communitySlug}
