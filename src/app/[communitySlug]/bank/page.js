@@ -17,7 +17,10 @@ export default async function Page({ params, searchParams }) {
   const accountSlug = generateUniqueId(accountAddress, communitySlug);
   const savedAccount = await kv.get(`account_slug_${accountSlug}`);
   if (!savedAccount) {
-    await kv.set(`account_slug_${accountSlug}`, accountSlug);
+    await kv.set(
+      `account_slug_${accountSlug}`,
+      JSON.stringify({ community: communitySlug, account: accountAddress })
+    );
   }
 
   const iban = process.env.WISE_ACCOUNT;
