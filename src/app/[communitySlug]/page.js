@@ -29,12 +29,6 @@ export default async function Page({ params, searchParams }) {
     errorMessage = `No topup server configuration found for ${communitySlug}`;
   }
 
-  const accountSlug = generateUniqueId(accountAddress, communitySlug);
-  const savedAccount = await kv.get(`account_slug_${accountSlug}`);
-  if (!savedAccount) {
-    await kv.set(`account_slug_${accountSlug}`, accountSlug);
-  }
-
   const iban = process.env.WISE_ACCOUNT;
   const accountName = process.env.WISE_ACCOUNT_NAME;
 
