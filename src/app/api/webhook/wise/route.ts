@@ -149,7 +149,7 @@ const processTransaction = async (transaction: WiseTransaction) => {
     0
   );
 
-  const topUpMessage = `Top up from ${transaction.details.senderName} - ${transaction.details.senderAccount}`;
+  const topUpMessage = `Top up from ${transaction.details.senderName}'s account`;
 
   console.log("!!! topUpMessage", topUpMessage);
 
