@@ -36,7 +36,7 @@
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
-        "amount": 1,
+        "amount": 100,
         "unit": "BHR"
       }
     ]
