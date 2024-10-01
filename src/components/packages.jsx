@@ -58,7 +58,7 @@ export function Packages({
           }
         }
         pkg.buyUrl = `/${communitySlug}/topup/${
-          pkg.unitprice_in_cents * pkg.amount
+          (pkg.unitprice_in_cents > 0 ? pkg.unitprice_in_cents : 1) * pkg.amount
         }`;
         return pkg;
       });

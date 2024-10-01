@@ -32,11 +32,11 @@
   "selcoupdepouce": {
     "packages": [
       {
-        "description": "Recevez 100 Bonne Heure (BHR) de bienvenue",
+        "description": "Recevez 1 Bonne Heure (BHR) de bienvenue",
         "unitprice_in_cents": 0,
         "fees_in_cents": 0,
         "currency": "EUR",
-        "amount": 100,
+        "amount": 1,
         "unit": "BHR"
       }
     ]
