@@ -21,6 +21,25 @@ export async function POST(request) {
     // Handle the event
     switch (event.type) {
       case "checkout.session.completed":
+        const forwardUrl = event?.data?.object?.metadata?.forward_url;
+        if (forwardUrl) {
+          // Forward the webhook to another endpoint
+          const response = await fetch(forwardUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "stripe-signature": sig,
+            },
+            body: body,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Forward request failed: ${response.statusText}`);
+          }
+
+          return new Response("forwarded", { status: 200 });
+        }
+
         const communitySlug: string | undefined | null =
           event?.data?.object?.metadata?.communitySlug;
         if (!communitySlug) {
