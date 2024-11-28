@@ -142,10 +142,10 @@ export default function Packages({
               ref={inputRef}
               type="text"
               inputMode="decimal"
-              value={customAmount}
               onChange={handleCustomChange}
               placeholder="0.00"
-              className="w-full p-2 text-3xl font-bold text-black border rounded-xl text-center"
+              style={{ backgroundColor: "white", color: "black" }}
+              className="w-full p-2 text-3xl font-bold bg-red !text-black border rounded-xl text-center"
             />
             {customAmount && (
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg text-black">
