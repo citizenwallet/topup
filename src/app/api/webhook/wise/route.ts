@@ -79,7 +79,16 @@ export async function POST(request: Request) {
         continue;
       }
 
-      await processTransaction(transaction);
+      const qrPrefix = `+++${process.env.CHECKOUT_QR_PREFIX}`;
+
+      if (
+        process.env.CHECKOUT_QR_PREFIX &&
+        transaction.details.paymentReference.startsWith(qrPrefix)
+      ) {
+        await processQRTransaction(transaction);
+      } else {
+        await processTransaction(transaction);
+      }
     }
   } catch (err) {
     console.log("!!! ERROR", err.message, JSON.stringify(err, null, 2));
@@ -89,6 +98,25 @@ export async function POST(request: Request) {
   // Return a 200 response to acknowledge receipt of the event
   return new Response("ok", { status: 200 });
 }
+
+const processQRTransaction = async (transaction: WiseTransaction) => {
+  const checkoutQROrder = `${process.env.CHECKOUT_BASE_URL}/api/v1/webhook/bank/qr`;
+
+  // Forward the webhook to another endpoint
+  const response = await fetch(checkoutQROrder, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transaction),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Forward request failed: ${response.statusText}`);
+  }
+
+  return;
+};
 
 const processTransaction = async (transaction: WiseTransaction) => {
   const accountSlug = transaction.details.paymentReference;
