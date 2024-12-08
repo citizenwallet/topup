@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 }
 
 const processQRTransaction = async (transaction: WiseTransaction) => {
-  const checkoutQROrder = `${process.env.CHECKOUT_BASE_URL}/api/v1/webhook/bank/qr`;
+  const checkoutQROrder = `${process.env.CHECKOUT_BASE_URL}/api/v1/webhooks/bank/qr`;
 
   // Forward the webhook to another endpoint
   const response = await fetch(checkoutQROrder, {
