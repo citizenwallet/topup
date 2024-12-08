@@ -107,6 +107,7 @@ const processQRTransaction = async (transaction: WiseTransaction) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CHECKOUT_PRIVATE_KEY}`,
     },
     body: JSON.stringify(transaction),
   });
