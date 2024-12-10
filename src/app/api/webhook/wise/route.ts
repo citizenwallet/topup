@@ -86,8 +86,12 @@ export async function POST(request: Request) {
         transaction.details.paymentReference.startsWith(qrPrefix)
       ) {
         await processQRTransaction(transaction);
-      } else {
+        continue;
+      }
+
+      if (transaction.details.paymentReference.startsWith("CW")) {
         await processTransaction(transaction);
+        continue;
       }
     }
   } catch (err) {
