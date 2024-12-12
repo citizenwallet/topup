@@ -120,6 +120,8 @@ const processQRTransaction = async (transaction: WiseTransaction) => {
     throw new Error(`Forward request failed: ${response.statusText}`);
   }
 
+  await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
+
   return;
 };
 
