@@ -83,13 +83,13 @@ export async function POST(request: Request) {
 
       if (
         process.env.CHECKOUT_QR_PREFIX &&
-        transaction.details.paymentReference.startsWith(qrPrefix)
+        transaction.details.paymentReference?.startsWith(qrPrefix)
       ) {
         await processQRTransaction(transaction);
         continue;
       }
 
-      if (transaction.details.paymentReference.startsWith("CW")) {
+      if (transaction.details.paymentReference?.startsWith("CW")) {
         await processTransaction(transaction);
         continue;
       }

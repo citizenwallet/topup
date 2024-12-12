@@ -18,7 +18,7 @@ export interface WiseTransaction {
     description: string;
     senderName: string;
     senderAccount: string;
-    paymentReference: string;
+    paymentReference?: string;
     recipientAccountNumber: string;
     recipientAccountDetailsId: number;
   };
