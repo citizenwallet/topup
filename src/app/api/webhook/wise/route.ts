@@ -122,6 +122,8 @@ const processQRTransaction = async (transaction: WiseTransaction) => {
 
   await kv.set(`wise_processed_${transaction.referenceNumber}`, true);
 
+  console.log("!!! processed QR transaction", transaction);
+
   return;
 };
 
